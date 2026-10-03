@@ -52,12 +52,12 @@ export function AppLoader({ done }: AppLoaderProps) {
       >
         <path
           fill="currentColor"
-          d="M14 5L50 5L50 17L26 17L26 25L43 25L43 37L26 37L26 42L14 54Z"
+          d="M24.21 54.24V27.39H19.23V19.93H24.21V18.32Q24.21 11.51 27.98 8.26Q31.74 5 39.13 5H44.11V12.83H38.4Q36.13 12.83 34.93 14.04Q33.72 15.24 33.72 17.44V19.93H44.77V27.39H33.72V44.73Z"
         />
         <path
           className="loader-foot"
           fill="currentColor"
-          d="M14 60L26 60L26 48Z"
+          d="M24.21 59 33.72 49.49V59Z"
         />
       </svg>
       <p
