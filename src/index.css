@@ -55,6 +55,8 @@
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
   --color-border-strong: var(--border-strong);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --color-accent-solid: var(--accent-solid);
   --color-accent-solid-foreground: var(--accent-solid-foreground);
   --color-accent-soft: var(--accent-soft);
@@ -78,17 +80,20 @@
 
 :root {
   color-scheme: light;
-  --surface-0: oklch(0.9 0.004 260);
-  --surface-1: oklch(0.945 0.004 260);
-  --surface-2: oklch(0.975 0.003 260);
-  --surface-3: oklch(1 0 0);
-  --border: oklch(0.82 0.005 260);
-  --border-strong: oklch(0.52 0.01 260);
-  --foreground: oklch(0.2 0.01 260);
-  --muted-foreground: oklch(0.42 0.01 260);
-  --accent-solid: oklch(0.5 0.19 258);
-  --accent-solid-foreground: oklch(0.99 0 0);
-  --accent-soft: oklch(0.5 0.19 258 / 14%);
+  --surface-0: #e9ebf0;
+  --surface-1: #f4f5f8;
+  --surface-2: #fafbfc;
+  --surface-3: #ffffff;
+  --border: #d5d9e1;
+  --border-strong: #7a8394;
+  --foreground: #14171c;
+  --muted-foreground: #4b5565;
+  --brand: #3558e0;
+  --brand-foreground: #ffffff;
+  --brand-soft: rgb(53 88 224 / 14%);
+  --accent-solid: var(--brand);
+  --accent-solid-foreground: var(--brand-foreground);
+  --accent-soft: var(--brand-soft);
   --success: oklch(0.45 0.13 150);
   --warning: oklch(0.5 0.13 70);
   --danger: oklch(0.5 0.2 27);
@@ -139,17 +144,20 @@
 
 .dark {
   color-scheme: dark;
-  --surface-0: oklch(0.15 0.005 260);
-  --surface-1: oklch(0.19 0.006 260);
-  --surface-2: oklch(0.23 0.006 260);
-  --surface-3: oklch(0.27 0.006 260);
-  --border: oklch(0.34 0.008 260);
-  --border-strong: oklch(0.58 0.01 260);
-  --foreground: oklch(0.95 0.003 260);
-  --muted-foreground: oklch(0.74 0.008 260);
-  --accent-solid: oklch(0.7 0.15 255);
-  --accent-solid-foreground: oklch(0.16 0.02 260);
-  --accent-soft: oklch(0.7 0.15 255 / 20%);
+  --surface-0: #0f1115;
+  --surface-1: #15181d;
+  --surface-2: #1b1f26;
+  --surface-3: #232832;
+  --border: #2c323d;
+  --border-strong: #6b7385;
+  --foreground: #eceef2;
+  --muted-foreground: #a3aab8;
+  --brand: #7b9cff;
+  --brand-foreground: #0b1020;
+  --brand-soft: rgb(123 156 255 / 20%);
+  --accent-solid: var(--brand);
+  --accent-solid-foreground: var(--brand-foreground);
+  --accent-soft: var(--brand-soft);
   --success: oklch(0.78 0.15 150);
   --warning: oklch(0.82 0.14 80);
   --danger: oklch(0.72 0.17 25);
