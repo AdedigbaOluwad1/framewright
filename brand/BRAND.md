@@ -195,19 +195,19 @@ Favicon, 32 px. Same tile, 22 px mark, 7 px corner radius.
 App icon, rounded square. The corner radius is 22.5% of the side (115 of 512), and the f is 62% of the tile height.
 
 ```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t" width="512" height="512"><title id="t">Framewright app icon</title><rect width="512" height="512" rx="115" fill="#0F1115"/><path fill="#7B9CFF" d="M209.82 387.82V228.68H180.34V184.46H209.82V174.92Q209.82 134.59 232.15 115.3Q254.48 96 298.28 96H327.76V142.4H293.94Q280.5 142.4 273.34 149.55Q266.19 156.7 266.19 169.71V184.46H331.66V228.68H266.19V331.45Z"/><path fill="#7B9CFF" d="M209.82 416 266.19 359.63V416Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t" width="512" height="512"><title id="t">Framewright app icon</title><rect width="512" height="512" rx="115" fill="#0F1115"/><path fill="#ECEEF2" d="M209.82 387.82V228.68H180.34V184.46H209.82V174.92Q209.82 134.59 232.15 115.3Q254.48 96 298.28 96H327.76V142.4H293.94Q280.5 142.4 273.34 149.55Q266.19 156.7 266.19 169.71V184.46H331.66V228.68H266.19V331.45Z"/><path fill="#ECEEF2" d="M209.82 416 266.19 359.63V416Z"/></svg>
 ```
 
 App icon, maskable. Full bleed, with the mark inside the central 80% safe circle.
 
 ```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t" width="512" height="512"><title id="t">Framewright maskable app icon</title><rect width="512" height="512" fill="#0F1115"/><path fill="#7B9CFF" d="M219.92 358.98V234.66H196.89V200.11H219.92V192.65Q219.92 161.15 237.37 146.07Q254.81 131 289.03 131H312.06V167.25H285.64Q275.14 167.25 269.55 172.84Q263.96 178.43 263.96 188.59V200.11H315.11V234.66H263.96V314.94Z"/><path fill="#7B9CFF" d="M219.92 381 263.96 336.96V381Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t" width="512" height="512"><title id="t">Framewright maskable app icon</title><rect width="512" height="512" fill="#0F1115"/><path fill="#ECEEF2" d="M219.92 358.98V234.66H196.89V200.11H219.92V192.65Q219.92 161.15 237.37 146.07Q254.81 131 289.03 131H312.06V167.25H285.64Q275.14 167.25 269.55 172.84Q263.96 178.43 263.96 188.59V200.11H315.11V234.66H263.96V314.94Z"/><path fill="#ECEEF2" d="M219.92 381 263.96 336.96V381Z"/></svg>
 ```
 
 Social avatar. Full bleed so platforms can crop it to a circle.
 
 ```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="t" width="400" height="400"><title id="t">Framewright avatar</title><rect width="400" height="400" fill="#0F1115"/><path fill="#7B9CFF" d="M169.7 286.5V182.07H150.35V153.05H169.7V146.79Q169.7 120.33 184.35 107.66Q199 95 227.74 95H247.09V125.45H224.9Q216.08 125.45 211.38 130.14Q206.69 134.84 206.69 143.37V153.05H249.65V182.07H206.69V249.51Z"/><path fill="#7B9CFF" d="M169.7 305 206.69 268.01V305Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="t" width="400" height="400"><title id="t">Framewright avatar</title><rect width="400" height="400" fill="#0F1115"/><path fill="#ECEEF2" d="M169.7 286.5V182.07H150.35V153.05H169.7V146.79Q169.7 120.33 184.35 107.66Q199 95 227.74 95H247.09V125.45H224.9Q216.08 125.45 211.38 130.14Q206.69 134.84 206.69 143.37V153.05H249.65V182.07H206.69V249.51Z"/><path fill="#ECEEF2" d="M169.7 305 206.69 268.01V305Z"/></svg>
 ```
 
 Open Graph card, 1200 x 630. The lettering is converted to paths, so it needs no fonts. It is a large file; open `brand/final/og-card.svg`.
