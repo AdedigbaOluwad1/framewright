@@ -1,4 +1,4 @@
-import { FolderOpen, Plus, Type } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { Button } from '@/shared/ui/button'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
@@ -48,7 +48,8 @@ export function ProjectPanel({
             <div className="flex flex-col gap-4 p-4">
               {visual.length === 0 ? (
                 <div className="flex flex-col items-center gap-3 py-6 text-center">
-                  <FolderOpen
+                  <Icon
+                    icon="hugeicons:folder-open"
                     className="size-8 text-muted-foreground"
                     aria-hidden="true"
                   />
@@ -87,8 +88,13 @@ export function ProjectPanel({
                     className="h-12 w-full justify-start gap-2 text-[0.95rem]"
                     onClick={onAddTextItem}
                   >
-                    <Type aria-hidden="true" /> {preset}
-                    <Plus className="ml-auto" aria-hidden="true" />
+                    <Icon icon="hugeicons:text-font" aria-hidden="true" />{' '}
+                    {preset}
+                    <Icon
+                      icon="hugeicons:add-01"
+                      className="ml-auto"
+                      aria-hidden="true"
+                    />
                   </Button>
                 </li>
               ))}

@@ -35,7 +35,7 @@ src/
 
 ## Stack
 
-React, Vite, TypeScript, Tailwind CSS, Zustand, Immer, mediabunny, `@ffmpeg/ffmpeg`, Vitest, oxlint, Prettier.
+React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Iconify (Hugeicons), Zustand, Immer, mediabunny, `@ffmpeg/ffmpeg`, Vitest, oxlint, Prettier.
 
 ## Getting started
 

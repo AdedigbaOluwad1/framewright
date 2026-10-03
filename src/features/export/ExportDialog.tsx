@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Download, X } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { Button } from '@/shared/ui/button'
 import {
   Dialog,
@@ -265,7 +265,8 @@ export function ExportDialog({
         <DialogFooter>
           {running ? (
             <Button variant="outline" onClick={onCancelExport}>
-              <X aria-hidden="true" /> Cancel export
+              <Icon icon="hugeicons:cancel-01" aria-hidden="true" /> Cancel
+              export
             </Button>
           ) : (
             <>
@@ -273,7 +274,7 @@ export function ExportDialog({
                 Close
               </Button>
               <Button onClick={() => onExport(settings)}>
-                <Download aria-hidden="true" /> Export
+                <Icon icon="hugeicons:download-01" aria-hidden="true" /> Export
               </Button>
             </>
           )}

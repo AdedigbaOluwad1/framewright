@@ -1,12 +1,6 @@
 import { useTheme } from 'next-themes'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
-import {
-  CircleCheckIcon,
-  InfoIcon,
-  TriangleAlertIcon,
-  OctagonXIcon,
-  Loader2Icon,
-} from 'lucide-react'
+import { Icon } from '@iconify/react'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
@@ -16,11 +10,15 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
+        success: (
+          <Icon icon="hugeicons:checkmark-circle-02" className="size-4" />
+        ),
+        info: <Icon icon="hugeicons:information-circle" className="size-4" />,
+        warning: <Icon icon="hugeicons:alert-02" className="size-4" />,
+        error: <Icon icon="hugeicons:cancel-circle" className="size-4" />,
+        loading: (
+          <Icon icon="hugeicons:loading-03" className="size-4 animate-spin" />
+        ),
       }}
       style={
         {

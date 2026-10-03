@@ -1,4 +1,4 @@
-import { Headphones, Lock, LockOpen, Volume2, VolumeX } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { IconButton } from '@/shared/ui/icon-button'
 import type { Track, TrackToggle } from './types'
 
@@ -26,9 +26,9 @@ export function TrackHeader({ track, onToggle }: TrackHeaderProps) {
         onClick={() => onToggle(track.id, 'muted')}
         icon={
           track.muted ? (
-            <VolumeX className="size-4" />
+            <Icon icon="hugeicons:volume-mute-01" className="size-4" />
           ) : (
-            <Volume2 className="size-4" />
+            <Icon icon="hugeicons:volume-high" className="size-4" />
           )
         }
       />
@@ -36,7 +36,7 @@ export function TrackHeader({ track, onToggle }: TrackHeaderProps) {
         label={track.solo ? `Unsolo ${track.name}` : `Solo ${track.name}`}
         pressed={track.solo}
         onClick={() => onToggle(track.id, 'solo')}
-        icon={<Headphones className="size-4" />}
+        icon={<Icon icon="hugeicons:headphones" className="size-4" />}
       />
       <IconButton
         label={track.locked ? `Unlock ${track.name}` : `Lock ${track.name}`}
@@ -44,9 +44,9 @@ export function TrackHeader({ track, onToggle }: TrackHeaderProps) {
         onClick={() => onToggle(track.id, 'locked')}
         icon={
           track.locked ? (
-            <Lock className="size-4" />
+            <Icon icon="hugeicons:square-lock-02" className="size-4" />
           ) : (
-            <LockOpen className="size-4" />
+            <Icon icon="hugeicons:square-unlock-02" className="size-4" />
           )
         }
       />

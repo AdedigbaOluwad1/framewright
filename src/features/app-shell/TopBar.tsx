@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Download, Moon, Sun } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { Button } from '@/shared/ui/button'
 import { IconButton } from '@/shared/ui/icon-button'
 import { Input } from '@/shared/ui/input'
@@ -186,9 +186,9 @@ export function TopBar({
         onClick={onToggleTheme}
         icon={
           theme === 'dark' ? (
-            <Sun className="size-4" />
+            <Icon icon="hugeicons:sun-03" className="size-4" />
           ) : (
-            <Moon className="size-4" />
+            <Icon icon="hugeicons:moon-02" className="size-4" />
           )
         }
       />
@@ -198,7 +198,7 @@ export function TopBar({
         className="h-9 gap-1 text-[0.9rem]"
         onClick={actions.export}
       >
-        <Download aria-hidden="true" /> Export
+        <Icon icon="hugeicons:download-01" aria-hidden="true" /> Export
       </Button>
     </header>
   )

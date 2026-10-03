@@ -1,4 +1,4 @@
-import { MousePointerClick } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -42,7 +42,11 @@ export function InspectorPanel({
       <ScrollArea className="min-h-0 flex-1">
         {!item ? (
           <div className="flex flex-col items-center gap-2 p-8 text-center text-muted-foreground">
-            <MousePointerClick className="size-6" aria-hidden="true" />
+            <Icon
+              icon="hugeicons:mouse-pointer-click"
+              className="size-6"
+              aria-hidden="true"
+            />
             <p className="text-[0.9rem]">
               {selection.length > 1
                 ? `${selection.length} items selected. Select one to edit.`

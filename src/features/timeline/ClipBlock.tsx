@@ -1,4 +1,4 @@
-import { AudioLines, Film, Lock, Music, Type, VolumeX } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { cn } from '@/shared/lib/utils'
 import { formatDuration } from '@/shared/lib/timecode'
 import { Waveform } from './Waveform'
@@ -30,10 +30,10 @@ const KIND_STYLES = {
 } as const
 
 const KIND_ICONS = {
-  video: Film,
-  text: Type,
-  audio: AudioLines,
-  music: Music,
+  video: 'hugeicons:film-01',
+  text: 'hugeicons:text-font',
+  audio: 'hugeicons:audio-wave-01',
+  music: 'hugeicons:music-note-01',
 } as const
 
 function itemLabel(item: TimelineItem): string {
@@ -53,7 +53,6 @@ export function ClipBlock({
   onKeyboardTrim,
   onKeyboardMove,
 }: ClipBlockProps) {
-  const Icon = KIND_ICONS[track.kind]
   const label = itemLabel(item)
   const muted = item.kind !== 'text' && item.muted
   const locked = track.locked
@@ -109,13 +108,25 @@ export function ClipBlock({
       onKeyDown={handleKeyDown}
     >
       <div className="flex h-6 items-center gap-1.5 px-2 font-medium">
-        <Icon className="size-3 shrink-0" aria-hidden="true" />
+        <Icon
+          icon={KIND_ICONS[track.kind]}
+          className="size-3.5 shrink-0"
+          aria-hidden="true"
+        />
         <span className="truncate">{label}</span>
         {muted ? (
-          <VolumeX className="size-3 shrink-0" aria-hidden="true" />
+          <Icon
+            icon="hugeicons:volume-mute-01"
+            className="size-3 shrink-0"
+            aria-hidden="true"
+          />
         ) : null}
         {locked ? (
-          <Lock className="size-3 shrink-0" aria-hidden="true" />
+          <Icon
+            icon="hugeicons:square-lock-02"
+            className="size-3 shrink-0"
+            aria-hidden="true"
+          />
         ) : null}
         <span className="tabular ml-auto shrink-0 opacity-80">
           {formatDuration(item.duration)}

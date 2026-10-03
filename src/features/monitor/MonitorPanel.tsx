@@ -1,15 +1,5 @@
 import { useState } from 'react'
-import {
-  Grid3x3,
-  Pause,
-  Play,
-  Repeat,
-  ScanLine,
-  SkipBack,
-  SkipForward,
-  StepBack,
-  StepForward,
-} from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { formatTimecode } from '@/shared/lib/timecode'
 import { IconButton } from '@/shared/ui/icon-button'
 import {
@@ -83,13 +73,13 @@ export function MonitorPanel({
             label="Safe area guides"
             pressed={safeArea}
             onClick={() => setSafeArea((value) => !value)}
-            icon={<ScanLine className="size-4" />}
+            icon={<Icon icon="hugeicons:scan" className="size-4" />}
           />
           <IconButton
             label="Grid guides"
             pressed={grid}
             onClick={() => setGrid((value) => !value)}
-            icon={<Grid3x3 className="size-4" />}
+            icon={<Icon icon="hugeicons:grid3x3" className="size-4" />}
           />
           <Select value={zoom} onValueChange={(v) => setZoom(v as MonitorZoom)}>
             <SelectTrigger
@@ -157,13 +147,13 @@ export function MonitorPanel({
             label="Jump to start"
             shortcut="Home"
             onClick={onJumpToStart}
-            icon={<SkipBack className="size-4" />}
+            icon={<Icon icon="hugeicons:previous" className="size-4" />}
           />
           <IconButton
             label="Step back one frame"
             shortcut="←"
             onClick={() => onStepFrame(-1)}
-            icon={<StepBack className="size-4" />}
+            icon={<Icon icon="hugeicons:step-back" className="size-4" />}
           />
           <IconButton
             label={playback.isPlaying ? 'Pause' : 'Play'}
@@ -173,9 +163,9 @@ export function MonitorPanel({
             onClick={onPlayPause}
             icon={
               playback.isPlaying ? (
-                <Pause className="size-4" />
+                <Icon icon="hugeicons:pause" className="size-4" />
               ) : (
-                <Play className="size-4" />
+                <Icon icon="hugeicons:play" className="size-4" />
               )
             }
           />
@@ -183,20 +173,20 @@ export function MonitorPanel({
             label="Step forward one frame"
             shortcut="→"
             onClick={() => onStepFrame(1)}
-            icon={<StepForward className="size-4" />}
+            icon={<Icon icon="hugeicons:step-forward" className="size-4" />}
           />
           <IconButton
             label="Jump to end"
             shortcut="End"
             onClick={onJumpToEnd}
-            icon={<SkipForward className="size-4" />}
+            icon={<Icon icon="hugeicons:next" className="size-4" />}
           />
           <IconButton
             label="Loop playback"
             shortcut="Mod+L"
             pressed={playback.loop}
             onClick={() => onToggleLoop(!playback.loop)}
-            icon={<Repeat className="size-4" />}
+            icon={<Icon icon="hugeicons:repeat" className="size-4" />}
           />
         </div>
         <div

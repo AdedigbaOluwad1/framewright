@@ -10,18 +10,21 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "icons": "node scripts/build-icons.mjs",
+    "predev": "npm run icons",
+    "prebuild": "npm run icons"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@iconify/react": "^6.0.2",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "cn": "^0.4.0",
     "immer": "^11.1.21",
-    "lucide-react": "^1.51.0",
     "mediabunny": "^1.61.1",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.6.7",
@@ -34,6 +37,8 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@iconify-json/hugeicons": "^1.2.35",
+    "@iconify/utils": "^3.1.7",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",

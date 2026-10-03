@@ -1,4 +1,4 @@
-import { AudioLines, Film, Image as ImageIcon, Plus } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { Badge } from '@/shared/ui/badge'
 import {
   ContextMenu,
@@ -14,10 +14,13 @@ interface MediaCardProps {
   onAddToTimeline: (mediaId: string) => void
 }
 
-const ICONS = { video: Film, audio: AudioLines, image: ImageIcon } as const
+const ICONS = {
+  video: 'hugeicons:film-01',
+  audio: 'hugeicons:audio-wave-01',
+  image: 'hugeicons:image-01',
+} as const
 
 export function MediaCard({ asset, onAddToTimeline }: MediaCardProps) {
-  const Icon = ICONS[asset.kind]
   const meta =
     asset.width && asset.height
       ? `${asset.width}×${asset.height} · ${formatBytes(asset.sizeBytes)}`
@@ -36,7 +39,11 @@ export function MediaCard({ asset, onAddToTimeline }: MediaCardProps) {
           }}
         >
           <div className="relative flex aspect-video items-center justify-center rounded-lg bg-surface-0 text-muted-foreground">
-            <Icon className="size-6" aria-hidden="true" />
+            <Icon
+              icon={ICONS[asset.kind]}
+              className="size-7"
+              aria-hidden="true"
+            />
             <Badge
               variant="secondary"
               className="tabular absolute right-1 bottom-1 h-5 rounded-md px-1.5 text-[0.7rem]"
@@ -54,7 +61,7 @@ export function MediaCard({ asset, onAddToTimeline }: MediaCardProps) {
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onSelect={() => onAddToTimeline(asset.id)}>
-          <Plus aria-hidden="true" /> Add to timeline
+          <Icon icon="hugeicons:add-01" aria-hidden="true" /> Add to timeline
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

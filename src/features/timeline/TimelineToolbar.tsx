@@ -1,12 +1,4 @@
-import {
-  Magnet,
-  MousePointer2,
-  Scissors,
-  Trash2,
-  ZoomIn,
-  ZoomOut,
-  Slice,
-} from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { IconButton } from '@/shared/ui/icon-button'
 import { Separator } from '@/shared/ui/separator'
 import { Slider } from '@/shared/ui/slider'
@@ -50,28 +42,28 @@ export function TimelineToolbar({
         shortcut="V"
         pressed={tool === 'select'}
         onClick={() => onSelectTool('select')}
-        icon={<MousePointer2 className="size-4" />}
+        icon={<Icon icon="hugeicons:cursor-01" className="size-4" />}
       />
       <IconButton
         label="Razor tool"
         shortcut="C"
         pressed={tool === 'razor'}
         onClick={() => onSelectTool('razor')}
-        icon={<Slice className="size-4" />}
+        icon={<Icon icon="hugeicons:knife-01" className="size-4" />}
       />
       <Separator orientation="vertical" className="mx-2 h-6" />
       <IconButton
         label="Split at playhead"
         shortcut="S"
         onClick={onSplit}
-        icon={<Scissors className="size-4" />}
+        icon={<Icon icon="hugeicons:scissor" className="size-4" />}
       />
       <IconButton
         label="Ripple delete"
         shortcut="Shift+Delete"
         disabled={!hasSelection}
         onClick={onRippleDelete}
-        icon={<Trash2 className="size-4" />}
+        icon={<Icon icon="hugeicons:delete-02" className="size-4" />}
       />
       <Separator orientation="vertical" className="mx-2 h-6" />
       <IconButton
@@ -79,14 +71,14 @@ export function TimelineToolbar({
         shortcut="N"
         pressed={snapEnabled}
         onClick={() => onToggleSnap(!snapEnabled)}
-        icon={<Magnet className="size-4" />}
+        icon={<Icon icon="hugeicons:magnet-01" className="size-4" />}
       />
       <div className="ml-auto flex items-center gap-2">
         <IconButton
           label="Zoom timeline out"
           shortcut="-"
           onClick={() => onZoomChange(Math.max(minZoom, pxPerSecond / 1.25))}
-          icon={<ZoomOut className="size-4" />}
+          icon={<Icon icon="hugeicons:zoom-out" className="size-4" />}
         />
         <Slider
           aria-label="Timeline zoom"
@@ -101,7 +93,7 @@ export function TimelineToolbar({
           label="Zoom timeline in"
           shortcut="+"
           onClick={() => onZoomChange(Math.min(maxZoom, pxPerSecond * 1.25))}
-          icon={<ZoomIn className="size-4" />}
+          icon={<Icon icon="hugeicons:zoom-in" className="size-4" />}
         />
       </div>
     </div>

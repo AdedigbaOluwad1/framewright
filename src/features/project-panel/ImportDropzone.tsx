@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Upload } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { cn } from '@/shared/lib/utils'
 
 interface ImportDropzoneProps {
@@ -37,7 +37,7 @@ export function ImportDropzone({
         handleFiles(event.dataTransfer.files)
       }}
     >
-      <Upload className="size-5" aria-hidden="true" />
+      <Icon icon="hugeicons:upload-01" className="size-5" aria-hidden="true" />
       <span className="font-medium text-foreground">
         {dragging ? 'Drop to import' : 'Drop files or browse'}
       </span>

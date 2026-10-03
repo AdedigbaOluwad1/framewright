@@ -1,4 +1,4 @@
-import { CheckCircle2, Cpu, MemoryStick, XCircle } from 'lucide-react'
+import { Icon } from '@iconify/react'
 import { Badge } from '@/shared/ui/badge'
 import type { Diagnostics } from './types'
 
@@ -26,7 +26,7 @@ export function StatusBar({
         variant="outline"
         className="h-4 gap-1 rounded px-1.5 text-[0.8rem] text-foreground"
       >
-        <Cpu className="size-3" aria-hidden="true" />
+        <Icon icon="hugeicons:cpu" className="size-3" aria-hidden="true" />
         Engine: {ENGINE_LABEL[diagnostics.engine]}
       </Badge>
       <Badge
@@ -34,14 +34,26 @@ export function StatusBar({
         className="h-4 gap-1 rounded px-1.5 text-[0.8rem] text-foreground"
       >
         {isolated ? (
-          <CheckCircle2 className="size-3 text-success" aria-hidden="true" />
+          <Icon
+            icon="hugeicons:checkmark-circle-02"
+            className="size-3 text-success"
+            aria-hidden="true"
+          />
         ) : (
-          <XCircle className="size-3 text-warning" aria-hidden="true" />
+          <Icon
+            icon="hugeicons:cancel-circle"
+            className="size-3 text-warning"
+            aria-hidden="true"
+          />
         )}
         Cross-origin isolated: {isolated ? 'yes' : 'no'}
       </Badge>
       <span className="flex items-center gap-1">
-        <MemoryStick className="size-3" aria-hidden="true" />
+        <Icon
+          icon="hugeicons:memory-stick"
+          className="size-3"
+          aria-hidden="true"
+        />
         {diagnostics.memoryHint}
       </span>
       <span className="tabular ml-auto">
