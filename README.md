@@ -56,6 +56,10 @@ npm run dev
 
 The dev and preview servers send COOP/COEP headers so `crossOriginIsolated` is true, which multithreaded ffmpeg.wasm needs. Self-host fonts and assets, since cross-origin isolation blocks most third-party embeds.
 
+## UI shell
+
+The interface is built and driven by mock data. See [WIRE.md](WIRE.md) for every callback, prop and shortcut you need to connect.
+
 ## Roadmap
 
 - [ ] M0: spike (import, decode to canvas, WebCodecs encode, ffmpeg.wasm hello-world, first benchmark)
