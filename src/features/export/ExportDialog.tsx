@@ -132,7 +132,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Resolution"
                   size="sm"
-                  className="h-10 text-[0.9rem]"
+                  className="h-10 w-full text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -154,7 +154,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Frame rate"
                   size="sm"
-                  className="h-10 text-[0.9rem]"
+                  className="h-10 w-full text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -194,7 +194,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Codec"
                   size="sm"
-                  className="h-10 text-[0.9rem]"
+                  className="h-10 w-full text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -213,7 +213,7 @@ export function ExportDialog({
             <Input
               id="export-name"
               value={settings.fileName}
-              className="h-10 text-[0.9rem]"
+              className="h-10 w-full text-[0.9rem]"
               onChange={(event) =>
                 setSettings({ ...settings, fileName: event.target.value })
               }
