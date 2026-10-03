@@ -86,7 +86,7 @@ All three were constructed on a 64 unit grid, drawn as plain SVG paths with no r
 Known weaknesses of the final:
 
 1. **Narrow.** The f is 349 units wide against 738 tall, so it fills a square tile less than a wide mark would. The app icon scales it to 62% of the tile height to compensate.
-2. **Subtle cut at 16 px.** The foot becomes about 2.5 px. It still reads as a notch, and the f is recognisable without it, but the cut is the detail to protect when resizing.
+2. **Subtle cut at 16 px.** In the 16 px favicon the f is 11 px tall, so the foot is about 1.9 px. It still reads as a notch, and the f is recognisable without it, but the cut is the detail to protect when resizing.
 3. **Top-heavy.** The hook and crossbar carry most of the visual weight, so the symbol is optically centred on its bounding box rather than its mass.
 
 ### Final symbol
@@ -180,16 +180,16 @@ Scale on a 15 px root:
 
 ### Assets
 
-Favicon, 16 px. The symbol scaled to the 16 px canvas, switching colour with the system theme.
+Favicon, 16 px. A dark rounded square with the white f inside, so it keeps its own contrast on any browser tab colour.
 
 ```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" role="img" aria-labelledby="t" width="16" height="16"><title id="t">Framewright favicon 16</title><style>.m{fill:#3558E0}@media (prefers-color-scheme:dark){.m{fill:#7B9CFF}}</style><path class="m" d="M5.98 13.77V6.8H4.69V4.87H5.98V4.45Q5.98 2.69 6.96 1.84Q7.93 1 9.85 1H11.14V3.03H9.66Q9.07 3.03 8.76 3.34Q8.45 3.66 8.45 4.22V4.87H11.31V6.8H8.45V11.3Z"/><path class="m" d="M5.98 15 8.45 12.53V15Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" role="img" aria-labelledby="t" width="16" height="16"><title id="t">Framewright favicon 16</title><rect width="16" height="16" rx="3.5" fill="#0F1115"/><path fill="#ECEEF2" d="M6.41 12.53V7.06H5.4V5.54H6.41V5.21Q6.41 3.83 7.18 3.16Q7.95 2.5 9.45 2.5H10.47V4.09H9.3Q8.84 4.09 8.6 4.34Q8.35 4.59 8.35 5.03V5.54H10.6V7.06H8.35V10.59Z"/><path fill="#ECEEF2" d="M6.41 13.5 8.35 11.56V13.5Z"/></svg>
 ```
 
-Favicon, 32 px.
+Favicon, 32 px. Same tile, 22 px mark, 7 px corner radius.
 
 ```svg
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="t" width="32" height="32"><title id="t">Framewright favicon 32</title><style>.m{fill:#3558E0}@media (prefers-color-scheme:dark){.m{fill:#7B9CFF}}</style><path class="m" d="M11.96 27.53V13.61H9.38V9.74H11.96V8.91Q11.96 5.38 13.91 3.69Q15.87 2 19.7 2H22.28V6.06H19.32Q18.14 6.06 17.52 6.69Q16.89 7.31 16.89 8.45V9.74H22.62V13.61H16.89V22.6Z"/><path class="m" d="M11.96 30 16.89 25.07V30Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="t" width="32" height="32"><title id="t">Framewright favicon 32</title><rect width="32" height="32" rx="7" fill="#0F1115"/><path fill="#ECEEF2" d="M12.83 25.06V14.12H10.8V11.08H12.83V10.43Q12.83 7.65 14.36 6.33Q15.9 5 18.91 5H20.93V8.19H18.61Q17.68 8.19 17.19 8.68Q16.7 9.17 16.7 10.07V11.08H21.2V14.12H16.7V21.19Z"/><path fill="#ECEEF2" d="M12.83 27 16.7 23.12V27Z"/></svg>
 ```
 
 App icon, rounded square. The corner radius is 22.5% of the side (115 of 512), and the f is 62% of the tile height.
