@@ -80,7 +80,7 @@ export function ExportDialog({
       onOpenChange={(next) => (!running || next) && onOpenChange(next)}
     >
       <DialogContent
-        className="max-w-md gap-5"
+        className="max-h-[90vh] gap-5 overflow-y-auto sm:max-w-xl"
         onEscapeKeyDown={(event) => running && event.preventDefault()}
         onInteractOutside={(event) => running && event.preventDefault()}
       >
@@ -91,7 +91,7 @@ export function ExportDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <fieldset disabled={running} className="flex flex-col gap-3">
+        <fieldset disabled={running} className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <Label className="text-[0.9rem]">Platform preset</Label>
             <ToggleGroup
@@ -103,7 +103,7 @@ export function ExportDialog({
               onValueChange={(value) =>
                 value && choosePreset(value as PlatformPreset)
               }
-              className="w-full"
+              className="grid w-full grid-cols-2 sm:grid-cols-4"
             >
               {(Object.keys(PRESET_LABELS) as PlatformPreset[]).map(
                 (preset) => (
