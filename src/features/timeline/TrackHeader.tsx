@@ -12,10 +12,10 @@ export function TrackHeader({ track, onToggle }: TrackHeaderProps) {
     <div
       role="group"
       aria-label={`${track.name} controls`}
-      className="flex h-full items-center gap-0.5 border-r border-b border-border bg-surface-2 px-1.5"
+      className="flex h-full items-center gap-1 border-r border-b border-border bg-surface-2 px-2.5"
     >
       <span
-        className="tabular w-11 shrink-0 truncate text-[11px] font-semibold text-foreground"
+        className="tabular w-11 shrink-0 truncate text-[0.8rem] font-semibold text-foreground"
         title={track.name}
       >
         {track.label}

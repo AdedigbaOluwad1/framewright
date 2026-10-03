@@ -19,7 +19,7 @@ export function Waveform({ seed, bars = 120 }: WaveformProps) {
   return (
     <svg
       aria-hidden="true"
-      className="absolute inset-x-0 bottom-0 h-[calc(100%-18px)] w-full opacity-60"
+      className="absolute inset-x-0 bottom-0 h-[calc(100%-24px)] w-full opacity-60"
       viewBox={`0 0 ${bars} 20`}
       preserveAspectRatio="none"
     >

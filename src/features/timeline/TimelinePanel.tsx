@@ -43,7 +43,7 @@ export interface TimelinePanelProps {
   onKeyboardMove: (itemId: string, deltaFrames: number) => void
 }
 
-const HEADER_WIDTH = 148
+const HEADER_WIDTH = 176
 const TAIL_SECONDS = 8
 
 export function TimelinePanel({
@@ -96,7 +96,7 @@ export function TimelinePanel({
   return (
     <section
       aria-label="Timeline"
-      className="flex h-full min-h-0 flex-col bg-surface-1"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface-1 shadow-sm"
     >
       <TimelineToolbar
         tool={tool}
@@ -121,7 +121,7 @@ export function TimelinePanel({
               className="sticky left-0 z-30 flex shrink-0 items-center border-r border-b border-border bg-surface-2 px-2"
               style={{ width: HEADER_WIDTH, height: 'var(--ruler-height)' }}
             >
-              <span className="tabular text-[11px] text-muted-foreground">
+              <span className="tabular text-[0.8rem] text-muted-foreground">
                 {formatTimecode(playheadTime, doc.fps)}
               </span>
             </div>

@@ -20,18 +20,18 @@ export function StatusBar({
   return (
     <footer
       aria-label="Status bar"
-      className="flex h-6 shrink-0 items-center gap-3 border-t border-border bg-surface-2 px-3 text-[11px] text-muted-foreground"
+      className="flex h-8 shrink-0 items-center gap-3 px-4 text-[0.8rem] text-muted-foreground"
     >
       <Badge
         variant="outline"
-        className="h-4 gap-1 rounded px-1.5 text-[11px] text-foreground"
+        className="h-4 gap-1 rounded px-1.5 text-[0.8rem] text-foreground"
       >
         <Cpu className="size-3" aria-hidden="true" />
         Engine: {ENGINE_LABEL[diagnostics.engine]}
       </Badge>
       <Badge
         variant="outline"
-        className="h-4 gap-1 rounded px-1.5 text-[11px] text-foreground"
+        className="h-4 gap-1 rounded px-1.5 text-[0.8rem] text-foreground"
       >
         {isolated ? (
           <CheckCircle2 className="size-3 text-success" aria-hidden="true" />

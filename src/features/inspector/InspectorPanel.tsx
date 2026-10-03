@@ -32,10 +32,10 @@ export function InspectorPanel({
   return (
     <aside
       aria-label="Inspector"
-      className="flex h-full min-h-0 flex-col bg-surface-1"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface-1 shadow-sm"
     >
-      <div className="flex h-9 shrink-0 items-center border-b border-border px-3">
-        <h2 className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+      <div className="flex h-11 shrink-0 items-center border-b border-border px-3">
+        <h2 className="text-[0.8rem] font-semibold tracking-wide text-muted-foreground uppercase">
           Inspector
         </h2>
       </div>
@@ -43,7 +43,7 @@ export function InspectorPanel({
         {!item ? (
           <div className="flex flex-col items-center gap-2 p-8 text-center text-muted-foreground">
             <MousePointerClick className="size-6" aria-hidden="true" />
-            <p className="text-[12px]">
+            <p className="text-[0.9rem]">
               {selection.length > 1
                 ? `${selection.length} items selected. Select one to edit.`
                 : 'Select a clip or text item to edit its properties.'}
@@ -90,7 +90,7 @@ function ItemEditor({
             onCommit={(scale) => update({ transform: { scale } })}
           />
           <div className="flex items-center gap-2">
-            <Label className="w-16 shrink-0 text-[12px] text-muted-foreground">
+            <Label className="w-16 shrink-0 text-[0.9rem] text-muted-foreground">
               Framing
             </Label>
             <ToggleGroup
@@ -103,13 +103,13 @@ function ItemEditor({
                 if (fit) update({ transform: { fit: fit as FitMode } })
               }}
             >
-              <ToggleGroupItem value="fit" className="text-[12px]">
+              <ToggleGroupItem value="fit" className="text-[0.9rem]">
                 Fit
               </ToggleGroupItem>
-              <ToggleGroupItem value="fill" className="text-[12px]">
+              <ToggleGroupItem value="fill" className="text-[0.9rem]">
                 Fill
               </ToggleGroupItem>
-              <ToggleGroupItem value="crop" className="text-[12px]">
+              <ToggleGroupItem value="crop" className="text-[0.9rem]">
                 Crop
               </ToggleGroupItem>
             </ToggleGroup>
@@ -121,7 +121,7 @@ function ItemEditor({
         <Section title="Text">
           <Label
             htmlFor="inspector-text"
-            className="text-[12px] text-muted-foreground"
+            className="text-[0.9rem] text-muted-foreground"
           >
             Content
           </Label>
@@ -129,14 +129,14 @@ function ItemEditor({
             id="inspector-text"
             key={item.id}
             defaultValue={item.text}
-            className="min-h-16 text-[12px]"
+            className="min-h-16 text-[0.9rem]"
             onBlur={(event) => {
               if (event.target.value !== item.text)
                 update({ text: event.target.value })
             }}
           />
           <div className="flex items-center gap-2">
-            <Label className="w-16 shrink-0 text-[12px] text-muted-foreground">
+            <Label className="w-16 shrink-0 text-[0.9rem] text-muted-foreground">
               Font
             </Label>
             <Select
@@ -146,7 +146,7 @@ function ItemEditor({
               <SelectTrigger
                 aria-label="Font family"
                 size="sm"
-                className="h-7 flex-1 text-[12px]"
+                className="h-9 flex-1 text-[0.9rem]"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -168,7 +168,7 @@ function ItemEditor({
           <div className="flex items-center gap-2">
             <Label
               htmlFor="inspector-color"
-              className="w-16 shrink-0 text-[12px] text-muted-foreground"
+              className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
             >
               Colour
             </Label>
@@ -176,10 +176,10 @@ function ItemEditor({
               id="inspector-color"
               type="color"
               value={item.color}
-              className="h-7 w-12 p-0.5"
+              className="h-9 w-12 p-0.5"
               onChange={(event) => update({ color: event.target.value })}
             />
-            <span className="tabular text-[12px] text-muted-foreground">
+            <span className="tabular text-[0.9rem] text-muted-foreground">
               {item.color}
             </span>
           </div>
@@ -230,7 +230,7 @@ function ItemEditor({
             <div className="flex items-center justify-between">
               <Label
                 htmlFor="inspector-mute"
-                className="text-[12px] text-muted-foreground"
+                className="text-[0.9rem] text-muted-foreground"
               >
                 Mute
               </Label>

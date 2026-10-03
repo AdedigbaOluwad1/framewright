@@ -80,7 +80,7 @@ export function ExportDialog({
       onOpenChange={(next) => (!running || next) && onOpenChange(next)}
     >
       <DialogContent
-        className="max-w-md gap-4"
+        className="max-w-md gap-5"
         onEscapeKeyDown={(event) => running && event.preventDefault()}
         onInteractOutside={(event) => running && event.preventDefault()}
       >
@@ -93,7 +93,7 @@ export function ExportDialog({
 
         <fieldset disabled={running} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
-            <Label className="text-[12px]">Platform preset</Label>
+            <Label className="text-[0.9rem]">Platform preset</Label>
             <ToggleGroup
               type="single"
               variant="outline"
@@ -110,7 +110,7 @@ export function ExportDialog({
                   <ToggleGroupItem
                     key={preset}
                     value={preset}
-                    className="flex-1 text-[12px]"
+                    className="flex-1 text-[0.9rem]"
                   >
                     {PRESET_LABELS[preset]}
                   </ToggleGroupItem>
@@ -121,7 +121,7 @@ export function ExportDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[12px]">Resolution</Label>
+              <Label className="text-[0.9rem]">Resolution</Label>
               <Select
                 value={`${settings.width}x${settings.height}`}
                 onValueChange={(value) => {
@@ -132,7 +132,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Resolution"
                   size="sm"
-                  className="h-8 text-[12px]"
+                  className="h-10 text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -146,7 +146,7 @@ export function ExportDialog({
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[12px]">Frame rate</Label>
+              <Label className="text-[0.9rem]">Frame rate</Label>
               <Select
                 value={String(settings.fps)}
                 onValueChange={(value) => patch({ fps: Number(value) })}
@@ -154,7 +154,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Frame rate"
                   size="sm"
-                  className="h-8 text-[12px]"
+                  className="h-10 text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -168,7 +168,7 @@ export function ExportDialog({
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="export-bitrate" className="text-[12px]">
+              <Label htmlFor="export-bitrate" className="text-[0.9rem]">
                 Video bitrate (kbps)
               </Label>
               <Input
@@ -177,14 +177,14 @@ export function ExportDialog({
                 min={500}
                 step={500}
                 value={settings.videoBitrateKbps}
-                className="tabular h-8 text-[12px]"
+                className="tabular h-10 text-[0.9rem]"
                 onChange={(event) =>
                   patch({ videoBitrateKbps: Number(event.target.value) })
                 }
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[12px]">Codec</Label>
+              <Label className="text-[0.9rem]">Codec</Label>
               <Select
                 value={settings.codec}
                 onValueChange={(codec) =>
@@ -194,7 +194,7 @@ export function ExportDialog({
                 <SelectTrigger
                   aria-label="Codec"
                   size="sm"
-                  className="h-8 text-[12px]"
+                  className="h-10 text-[0.9rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -207,13 +207,13 @@ export function ExportDialog({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="export-name" className="text-[12px]">
+            <Label htmlFor="export-name" className="text-[0.9rem]">
               File name
             </Label>
             <Input
               id="export-name"
               value={settings.fileName}
-              className="h-8 text-[12px]"
+              className="h-10 text-[0.9rem]"
               onChange={(event) =>
                 setSettings({ ...settings, fileName: event.target.value })
               }
@@ -221,7 +221,7 @@ export function ExportDialog({
           </div>
         </fieldset>
 
-        <dl className="grid grid-cols-2 gap-2 rounded-[var(--radius)] border border-border bg-surface-2 p-3 text-[12px]">
+        <dl className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface-2 p-3 text-[0.9rem]">
           <div>
             <dt className="text-muted-foreground">Estimated size</dt>
             <dd className="tabular font-medium">
@@ -241,7 +241,7 @@ export function ExportDialog({
             {running ? (
               <>
                 <Progress value={progress} aria-label="Export progress" />
-                <div className="tabular flex justify-between text-[12px] text-muted-foreground">
+                <div className="tabular flex justify-between text-[0.9rem] text-muted-foreground">
                   <span>{progress}%</span>
                   <span>{formatDuration(status.etaSeconds)} remaining</span>
                 </div>
@@ -250,7 +250,7 @@ export function ExportDialog({
             <p
               role="status"
               aria-live="polite"
-              className="text-[12px] data-[phase=error]:text-danger"
+              className="text-[0.9rem] data-[phase=error]:text-danger"
               data-phase={status.phase}
             >
               {status.phase === 'running' && `Exporting, ${progress} percent`}

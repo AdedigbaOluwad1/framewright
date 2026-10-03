@@ -72,10 +72,10 @@ export function MonitorPanel({
   return (
     <section
       aria-label="Program monitor"
-      className="flex h-full min-h-0 flex-col bg-surface-1"
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface-1 shadow-sm"
     >
-      <div className="flex h-9 shrink-0 items-center gap-1 border-b border-border px-2">
-        <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+      <div className="flex h-11 shrink-0 items-center gap-1.5 border-b border-border px-3">
+        <span className="text-[0.8rem] font-semibold tracking-wide text-muted-foreground uppercase">
           Program
         </span>
         <div className="ml-auto flex items-center gap-1">
@@ -95,7 +95,7 @@ export function MonitorPanel({
             <SelectTrigger
               aria-label="Monitor zoom"
               size="sm"
-              className="h-7 w-20 text-[12px]"
+              className="h-9 w-20 text-[0.9rem]"
             >
               <SelectValue />
             </SelectTrigger>
@@ -109,7 +109,7 @@ export function MonitorPanel({
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto bg-surface-0 p-3">
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto bg-surface-0 p-5">
         <div
           className="relative shrink-0 bg-black shadow-[0_0_0_1px_var(--border)]"
           style={frameStyle}
@@ -144,10 +144,10 @@ export function MonitorPanel({
       <div
         role="toolbar"
         aria-label="Transport controls"
-        className="flex h-11 shrink-0 items-center justify-between gap-2 border-t border-border px-3"
+        className="flex h-14 shrink-0 items-center justify-between gap-2 border-t border-border px-3"
       >
         <div
-          className="tabular text-[13px] text-foreground"
+          className="tabular text-[0.95rem] text-foreground"
           aria-label="Current time"
         >
           {formatTimecode(playback.currentTime, fps)}
@@ -200,7 +200,7 @@ export function MonitorPanel({
           />
         </div>
         <div
-          className="tabular text-[13px] text-muted-foreground"
+          className="tabular text-[0.95rem] text-muted-foreground"
           aria-label="Total duration"
         >
           {formatTimecode(duration, fps)}

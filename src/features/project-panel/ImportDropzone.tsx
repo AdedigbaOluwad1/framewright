@@ -23,8 +23,8 @@ export function ImportDropzone({
       htmlFor={inputId}
       data-dragging={dragging || undefined}
       className={cn(
-        'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-[var(--radius)] border border-dashed border-border-strong bg-surface-2 text-center text-[12px] text-muted-foreground transition-colors hover:bg-accent-soft focus-within:outline-2 focus-within:outline-ring data-[dragging]:border-solid data-[dragging]:border-accent-solid data-[dragging]:bg-accent-soft',
-        compact ? 'p-3' : 'p-8',
+        'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border-strong bg-surface-2 text-center text-[0.9rem] text-muted-foreground transition-colors hover:bg-accent-soft focus-within:outline-2 focus-within:outline-ring data-[dragging]:border-solid data-[dragging]:border-accent-solid data-[dragging]:bg-accent-soft',
+        compact ? 'p-4' : 'p-10',
       )}
       onDragOver={(event) => {
         event.preventDefault()

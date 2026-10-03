@@ -43,7 +43,7 @@ export function TimelineToolbar({
     <div
       role="toolbar"
       aria-label="Timeline tools"
-      className="flex h-9 shrink-0 items-center gap-0.5 border-b border-border bg-surface-1 px-2"
+      className="flex h-11 shrink-0 items-center gap-1 border-b border-border bg-surface-1 px-3"
     >
       <IconButton
         label="Select tool"
@@ -59,7 +59,7 @@ export function TimelineToolbar({
         onClick={() => onSelectTool('razor')}
         icon={<Slice className="size-4" />}
       />
-      <Separator orientation="vertical" className="mx-1.5 h-5" />
+      <Separator orientation="vertical" className="mx-2 h-6" />
       <IconButton
         label="Split at playhead"
         shortcut="S"
@@ -73,7 +73,7 @@ export function TimelineToolbar({
         onClick={onRippleDelete}
         icon={<Trash2 className="size-4" />}
       />
-      <Separator orientation="vertical" className="mx-1.5 h-5" />
+      <Separator orientation="vertical" className="mx-2 h-6" />
       <IconButton
         label="Snapping"
         shortcut="N"

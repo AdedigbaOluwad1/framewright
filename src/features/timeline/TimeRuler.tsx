@@ -36,7 +36,7 @@ export function TimeRuler({ duration, pxPerSecond, onSeek }: TimeRulerProps) {
             style={{ left: time * pxPerSecond }}
           >
             <div className="absolute bottom-0 h-3 w-px bg-border-strong" />
-            <span className="tabular absolute top-0.5 left-1 text-[10px] text-muted-foreground">
+            <span className="tabular absolute top-0.5 left-1 text-[0.7rem] text-muted-foreground">
               {formatDuration(time)}
             </span>
             {Array.from({ length: 3 }, (_, m) => (

@@ -35,7 +35,7 @@ export function IconButton({
           aria-pressed={pressed}
           data-pressed={pressed || undefined}
           className={cn(
-            'size-7 min-h-6 min-w-6 p-0 data-[pressed]:bg-accent-soft data-[pressed]:text-foreground data-[pressed]:ring-1 data-[pressed]:ring-accent-solid',
+            'size-9 min-h-9 min-w-9 p-0 data-[pressed]:bg-accent-soft data-[pressed]:text-foreground data-[pressed]:ring-1 data-[pressed]:ring-accent-solid',
             className,
           )}
           {...props}
@@ -61,7 +61,7 @@ export function Kbd({
   return (
     <kbd
       className={cn(
-        'ml-2 rounded border border-border-strong/60 px-1 font-mono text-[10px] leading-4',
+        'ml-2 rounded border border-border-strong/60 px-1 font-mono text-[0.7rem] leading-4',
         className,
       )}
     >

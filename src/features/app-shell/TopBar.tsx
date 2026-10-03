@@ -69,17 +69,17 @@ export function TopBar({
   }
 
   return (
-    <header className="flex h-10 shrink-0 items-center gap-3 border-b border-border bg-surface-2 px-2">
-      <span className="px-1 text-[13px] font-semibold tracking-tight">
+    <header className="flex h-14 shrink-0 items-center gap-3 px-4">
+      <span className="px-1 text-[0.95rem] font-semibold tracking-tight">
         Framewright
       </span>
 
       <Menubar
         aria-label="Application menu"
-        className="h-8 border-0 bg-transparent p-0 shadow-none"
+        className="h-10 border-0 bg-transparent p-0 shadow-none"
       >
         <MenubarMenu>
-          <MenubarTrigger className="text-[12px]">File</MenubarTrigger>
+          <MenubarTrigger className="text-[0.9rem]">File</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onSelect={onNewProject}>New project</MenubarItem>
             <MenubarItem onSelect={() => fileInput.current?.click()}>
@@ -95,7 +95,7 @@ export function TopBar({
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
-          <MenubarTrigger className="text-[12px]">Edit</MenubarTrigger>
+          <MenubarTrigger className="text-[0.9rem]">Edit</MenubarTrigger>
           <MenubarContent>
             {actionItem('undo')}
             {actionItem('redo')}
@@ -106,7 +106,7 @@ export function TopBar({
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
-          <MenubarTrigger className="text-[12px]">View</MenubarTrigger>
+          <MenubarTrigger className="text-[0.9rem]">View</MenubarTrigger>
           <MenubarContent>
             <MenubarItem onSelect={() => onTogglePanel('project')}>
               Toggle project panel
@@ -125,7 +125,7 @@ export function TopBar({
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
-          <MenubarTrigger className="text-[12px]">Help</MenubarTrigger>
+          <MenubarTrigger className="text-[0.9rem]">Help</MenubarTrigger>
           <MenubarContent>{actionItem('commandPalette')}</MenubarContent>
         </MenubarMenu>
       </Menubar>
@@ -149,7 +149,7 @@ export function TopBar({
         aria-label="Project name"
         defaultValue={projectName}
         key={projectName}
-        className="mx-auto h-7 w-56 border-transparent bg-transparent text-center text-[12px] hover:border-border focus-visible:border-ring"
+        className="mx-auto h-9 w-56 border-transparent bg-transparent text-center text-[0.9rem] hover:border-border focus-visible:border-ring"
         onBlur={(event) => {
           if (event.target.value !== projectName)
             onRenameProject(event.target.value)
@@ -166,7 +166,7 @@ export function TopBar({
         <SelectTrigger
           aria-label="Workspace"
           size="sm"
-          className="h-7 w-28 text-[12px]"
+          className="h-9 w-28 text-[0.9rem]"
         >
           <SelectValue />
         </SelectTrigger>
@@ -195,7 +195,7 @@ export function TopBar({
 
       <Button
         size="sm"
-        className="h-7 gap-1 text-[12px]"
+        className="h-9 gap-1 text-[0.9rem]"
         onClick={actions.export}
       >
         <Download aria-hidden="true" /> Export

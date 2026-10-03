@@ -90,7 +90,7 @@ export function ClipBlock({
       data-selected={selected || undefined}
       data-locked={locked || undefined}
       className={cn(
-        'group absolute top-1 bottom-1 overflow-hidden rounded-[var(--radius)] border border-black/25 text-[11px] leading-4 outline-none select-none',
+        'group absolute top-1.5 bottom-1.5 overflow-hidden rounded-[calc(var(--radius)*0.7)] border border-black/25 text-[0.8rem] leading-4 outline-none select-none',
         KIND_STYLES[track.kind],
         tool === 'razor' ? 'cursor-crosshair' : 'cursor-pointer',
         'hover:brightness-110 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-surface-1',
@@ -108,7 +108,7 @@ export function ClipBlock({
       onPointerDown={(event) => onPointerDown(item.id, event)}
       onKeyDown={handleKeyDown}
     >
-      <div className="flex h-[18px] items-center gap-1 px-1.5 font-medium">
+      <div className="flex h-6 items-center gap-1.5 px-2 font-medium">
         <Icon className="size-3 shrink-0" aria-hidden="true" />
         <span className="truncate">{label}</span>
         {muted ? (
@@ -124,7 +124,7 @@ export function ClipBlock({
       {item.kind === 'video' ? (
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-[calc(100%-18px)] opacity-40 [background-image:repeating-linear-gradient(90deg,currentColor_0_1px,transparent_1px_30px)]"
+          className="absolute inset-x-0 bottom-0 h-[calc(100%-24px)] opacity-40 [background-image:repeating-linear-gradient(90deg,currentColor_0_1px,transparent_1px_30px)]"
         />
       ) : null}
       {item.kind === 'audio' ? <Waveform seed={item.id} /> : null}
@@ -159,10 +159,10 @@ function TrimHandle({
     <div
       aria-hidden="true"
       className={cn(
-        'absolute inset-y-0 z-[2] w-1.5 cursor-ew-resize bg-foreground/0 opacity-0 transition-opacity group-hover:bg-foreground/70 group-hover:opacity-100 group-data-[selected]:bg-foreground/70 group-data-[selected]:opacity-100 group-focus-visible:opacity-100',
+        'absolute inset-y-0 z-[2] w-2 cursor-ew-resize bg-foreground/0 opacity-0 transition-opacity group-hover:bg-foreground/70 group-hover:opacity-100 group-data-[selected]:bg-foreground/70 group-data-[selected]:opacity-100 group-focus-visible:opacity-100',
         edge === 'in'
-          ? 'left-0 rounded-l-[var(--radius)]'
-          : 'right-0 rounded-r-[var(--radius)]',
+          ? 'left-0 rounded-l-[calc(var(--radius)*0.7)]'
+          : 'right-0 rounded-r-[calc(var(--radius)*0.7)]',
       )}
       onPointerDown={(event) => {
         event.stopPropagation()

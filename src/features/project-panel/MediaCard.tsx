@@ -29,25 +29,25 @@ export function MediaCard({ asset, onAddToTimeline }: MediaCardProps) {
         <button
           type="button"
           aria-label={`${asset.name}, ${asset.kind}, ${formatDuration(asset.duration)}. Press Enter to add to timeline`}
-          className="group flex flex-col gap-1 rounded-[var(--radius)] border border-border bg-surface-2 p-1 text-left hover:bg-accent-soft focus-visible:outline-2"
+          className="group flex w-full min-w-0 flex-col gap-1.5 rounded-xl border border-border bg-surface-2 p-1.5 text-left hover:bg-accent-soft focus-visible:outline-2"
           onDoubleClick={() => onAddToTimeline(asset.id)}
           onKeyDown={(event) => {
             if (event.key === 'Enter') onAddToTimeline(asset.id)
           }}
         >
-          <div className="relative flex aspect-video items-center justify-center rounded-[calc(var(--radius)-2px)] bg-surface-0 text-muted-foreground">
+          <div className="relative flex aspect-video items-center justify-center rounded-lg bg-surface-0 text-muted-foreground">
             <Icon className="size-6" aria-hidden="true" />
             <Badge
               variant="secondary"
-              className="tabular absolute right-1 bottom-1 h-4 rounded px-1 text-[10px]"
+              className="tabular absolute right-1 bottom-1 h-5 rounded-md px-1.5 text-[0.7rem]"
             >
               {formatDuration(asset.duration)}
             </Badge>
           </div>
-          <span className="truncate px-0.5 text-[12px] font-medium">
+          <span className="truncate px-0.5 text-[0.9rem] font-medium">
             {asset.name}
           </span>
-          <span className="truncate px-0.5 text-[11px] text-muted-foreground">
+          <span className="truncate px-0.5 text-[0.8rem] text-muted-foreground">
             {meta}
           </span>
         </button>

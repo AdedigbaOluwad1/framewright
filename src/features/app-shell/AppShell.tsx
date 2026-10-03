@@ -152,7 +152,7 @@ export function AppShell({
   useShortcuts(actions, !exportOpen)
 
   return (
-    <div className="flex h-full flex-col bg-background text-[13px]">
+    <div className="flex h-full flex-col bg-background text-[0.95rem]">
       <a
         href="#timeline-region"
         className="sr-only focus:not-sr-only focus:absolute focus:top-1 focus:left-1 focus:z-50 focus:rounded focus:bg-primary focus:px-2 focus:py-1 focus:text-primary-foreground"
@@ -177,9 +177,9 @@ export function AppShell({
         onTogglePanel={togglePanel}
       />
 
-      <main className="min-h-0 flex-1">
+      <main className="min-h-0 flex-1 px-3 pb-1">
         <ResizablePanelGroup orientation="vertical" id="workspace-rows">
-          <ResizablePanel id="top-row" defaultSize="62" minSize="30">
+          <ResizablePanel id="top-row" defaultSize="58" minSize="30">
             <ResizablePanelGroup
               orientation="horizontal"
               id="workspace-columns"
@@ -199,7 +199,10 @@ export function AppShell({
                   onAddTextItem={handlers.onAddTextItem}
                 />
               </ResizablePanel>
-              <ResizableHandle aria-label="Resize project panel" />
+              <ResizableHandle
+                aria-label="Resize project panel"
+                className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+              />
               <ResizablePanel id="monitor" defaultSize="52" minSize="25">
                 <MonitorPanel
                   canvasRef={canvasRef}
@@ -215,7 +218,10 @@ export function AppShell({
                   onToggleLoop={handlers.onToggleLoop}
                 />
               </ResizablePanel>
-              <ResizableHandle aria-label="Resize inspector" />
+              <ResizableHandle
+                aria-label="Resize inspector"
+                className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+              />
               <ResizablePanel
                 id="inspector"
                 panelRef={inspectorPanel}
@@ -231,11 +237,14 @@ export function AppShell({
               </ResizablePanel>
             </ResizablePanelGroup>
           </ResizablePanel>
-          <ResizableHandle aria-label="Resize timeline" />
+          <ResizableHandle
+            aria-label="Resize timeline"
+            className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+          />
           <ResizablePanel
             id="timeline"
             panelRef={timelinePanel}
-            defaultSize="38"
+            defaultSize="42"
             minSize="20"
             collapsible
             collapsedSize="0"

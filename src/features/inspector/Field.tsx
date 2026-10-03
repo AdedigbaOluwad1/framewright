@@ -14,11 +14,11 @@ export function Section({
   return (
     <section
       aria-labelledby={id}
-      className="flex flex-col gap-2 border-b border-border p-3"
+      className="flex flex-col gap-3 border-b border-border p-4"
     >
       <h3
         id={id}
-        className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
+        className="text-[0.8rem] font-semibold tracking-wide text-muted-foreground uppercase"
       >
         {title}
       </h3>
@@ -47,7 +47,7 @@ export function NumberField({
     <div className="flex items-center gap-2">
       <Label
         htmlFor={id}
-        className="w-16 shrink-0 text-[12px] text-muted-foreground"
+        className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
       >
         {label}
       </Label>
@@ -57,7 +57,7 @@ export function NumberField({
         step={step}
         defaultValue={value}
         key={value}
-        className="tabular h-7 text-[12px]"
+        className="tabular h-9 text-[0.9rem]"
         onBlur={(event) => {
           const next = Number(event.target.value)
           if (!Number.isNaN(next) && next !== value) onCommit(next)
@@ -67,7 +67,9 @@ export function NumberField({
         }}
       />
       {suffix ? (
-        <span className="w-6 text-[11px] text-muted-foreground">{suffix}</span>
+        <span className="w-6 text-[0.8rem] text-muted-foreground">
+          {suffix}
+        </span>
       ) : null}
     </div>
   )
@@ -97,7 +99,7 @@ export function SliderField({
     <div className="flex items-center gap-2">
       <Label
         id={id}
-        className="w-16 shrink-0 text-[12px] text-muted-foreground"
+        className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
       >
         {label}
       </Label>
@@ -109,7 +111,7 @@ export function SliderField({
         value={[value]}
         onValueChange={([next]) => onCommit(next)}
       />
-      <span className="tabular w-12 shrink-0 text-right text-[12px]">
+      <span className="tabular w-12 shrink-0 text-right text-[0.9rem]">
         {format(value)}
       </span>
     </div>
