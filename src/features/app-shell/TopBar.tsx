@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Icon } from '@iconify/react'
+import { BrandLockup } from '@/shared/ui/brand-lockup'
 import { Button } from '@/shared/ui/button'
 import { IconButton } from '@/shared/ui/icon-button'
 import { Input } from '@/shared/ui/input'
@@ -70,9 +71,7 @@ export function TopBar({
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 px-4">
-      <span className="px-1 text-[0.95rem] font-semibold tracking-tight">
-        Framewright
-      </span>
+      <BrandLockup className="mx-1 h-[18px] shrink-0" />
 
       <Menubar
         aria-label="Application menu"
