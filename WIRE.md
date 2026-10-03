@@ -81,6 +81,10 @@ Single source: `src/shared/shortcuts/registry.ts`. `useShortcuts` matches key ev
 
 Shortcuts are ignored in text fields (except Mod+K and Mod+E), and navigation keys are ignored when a button, slider, tab, menu or clip option has focus so widgets keep their native keyboard behaviour.
 
+## Startup loader
+
+`AppLoader` covers the app until `useBoot()` reports ready. Boot is ready when fonts have loaded, a minimum display time has passed, and the optional `ready` flag is true. Pass your real initialisation state as `useBoot({ ready })`, for example capability detection or the cached ffmpeg.wasm core, and lower or remove `minDurationMs` (default 1800) once real work takes that long, since the brand promises speed. The rotating messages live in `MESSAGES` in `AppLoader.tsx`, and the last one stays until boot finishes. While the loader is up, the app underneath is `inert`.
+
 ## Design tokens
 
 All colours, radii and track sizes are CSS variables in `src/index.css`: surfaces `--surface-0..3`, `--accent-solid`, state colours, `--playhead`, and clip colours `--clip-video`, `--clip-caption`, `--clip-audio`, `--clip-music` (each with an `-fg` pair). The token for text clips is named `caption` because Tailwind already owns the `bg-clip-text` utility.

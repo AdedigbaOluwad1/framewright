@@ -209,3 +209,39 @@
     }
   }
 }
+
+@keyframes loader-cut {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(5px, -5px);
+  }
+}
+
+@keyframes loader-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loader-foot {
+  animation: loader-cut 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.loader-message {
+  animation: loader-message-in 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-foot,
+  .loader-message {
+    animation: none;
+  }
+}
