@@ -57,6 +57,8 @@
   --color-border-strong: var(--border-strong);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
+  --color-tile: var(--tile);
+  --color-tile-foreground: var(--tile-foreground);
   --color-accent-solid: var(--accent-solid);
   --color-accent-solid-foreground: var(--accent-solid-foreground);
   --color-accent-soft: var(--accent-soft);
@@ -91,6 +93,8 @@
   --brand: #3558e0;
   --brand-foreground: #ffffff;
   --brand-soft: rgb(53 88 224 / 14%);
+  --tile: #0f1115;
+  --tile-foreground: #eceef2;
   --accent-solid: var(--brand);
   --accent-solid-foreground: var(--brand-foreground);
   --accent-soft: var(--brand-soft);
@@ -155,6 +159,8 @@
   --brand: #7b9cff;
   --brand-foreground: #0b1020;
   --brand-soft: rgb(123 156 255 / 20%);
+  --tile: #0f1115;
+  --tile-foreground: #eceef2;
   --accent-solid: var(--brand);
   --accent-solid-foreground: var(--brand-foreground);
   --accent-soft: var(--brand-soft);
