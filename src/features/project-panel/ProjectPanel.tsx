@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { Icon } from '@iconify/react'
 import { Button } from '@/shared/ui/button'
+import { EmptyState } from '@/shared/ui/empty-state'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { formatDuration } from '@/shared/lib/timecode'
@@ -70,38 +71,31 @@ function ProjectPanelView({
         </TabsList>
 
         <TabsContent value="media" className="min-h-0 flex-1">
-          <ScrollArea className="h-full">
-            <div className="flex flex-col gap-4 p-4">
-              {visual.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 py-6 text-center">
-                  <Icon
-                    icon="hugeicons:folder-open"
-                    className="size-8 text-muted-foreground"
-                    aria-hidden="true"
-                  />
-                  <p className="text-[0.95rem] font-medium">No media yet</p>
-                  <p className="max-w-52 text-[0.9rem] text-muted-foreground">
-                    Import clips to start building your vertical video.
-                  </p>
-                  <ImportDropzone onImportFiles={onImportFiles} />
-                </div>
-              ) : (
-                <>
-                  <ImportDropzone compact onImportFiles={onImportFiles} />
-                  <ul className="grid grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))] gap-3">
-                    {visual.map((asset) => (
-                      <li key={asset.id} className="min-w-0">
-                        <MediaCard
-                          asset={asset}
-                          onAddToTimeline={onAddMediaToTimeline}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          </ScrollArea>
+          {visual.length === 0 ? (
+            <EmptyState
+              icon="hugeicons:folder-open"
+              title="No media yet"
+              description="Import clips to start building your vertical video."
+            >
+              <ImportDropzone onImportFiles={onImportFiles} />
+            </EmptyState>
+          ) : (
+            <ScrollArea className="h-full">
+              <div className="flex flex-col gap-4 p-4">
+                <ImportDropzone compact onImportFiles={onImportFiles} />
+                <ul className="grid grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))] gap-3">
+                  {visual.map((asset) => (
+                    <li key={asset.id} className="min-w-0">
+                      <MediaCard
+                        asset={asset}
+                        onAddToTimeline={onAddMediaToTimeline}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </ScrollArea>
+          )}
         </TabsContent>
 
         <TabsContent value="text" className="min-h-0 flex-1">
@@ -132,14 +126,18 @@ function ProjectPanelView({
         </TabsContent>
 
         <TabsContent value="audio" className="min-h-0 flex-1">
-          <ScrollArea className="h-full">
-            <div className="flex flex-col gap-4 p-4">
-              <ImportDropzone compact onImportFiles={onImportFiles} />
-              {audio.length === 0 ? (
-                <p className="px-1 text-center text-[0.9rem] text-muted-foreground">
-                  Import audio to add voice-over or music.
-                </p>
-              ) : (
+          {audio.length === 0 ? (
+            <EmptyState
+              icon="hugeicons:music-note-01"
+              title="No audio yet"
+              description="Import music or a voice-over to layer under your video."
+            >
+              <ImportDropzone onImportFiles={onImportFiles} />
+            </EmptyState>
+          ) : (
+            <ScrollArea className="h-full">
+              <div className="flex flex-col gap-4 p-4">
+                <ImportDropzone compact onImportFiles={onImportFiles} />
                 <ul className="flex flex-col gap-2">
                   {audio.map((asset) => (
                     <li
@@ -173,9 +171,9 @@ function ProjectPanelView({
                     </li>
                   ))}
                 </ul>
-              )}
-            </div>
-          </ScrollArea>
+              </div>
+            </ScrollArea>
+          )}
         </TabsContent>
       </Tabs>
     </section>

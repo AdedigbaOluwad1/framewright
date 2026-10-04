@@ -25,7 +25,7 @@ export function TimeRuler({
   return (
     <div
       role="presentation"
-      className="relative h-[var(--ruler-height)] cursor-text border-b border-border bg-surface-2"
+      className="relative h-[var(--ruler-height)] cursor-text overflow-hidden border-b border-border bg-surface-2"
       style={{ width }}
     >
       {markIn !== null || markOut !== null ? (

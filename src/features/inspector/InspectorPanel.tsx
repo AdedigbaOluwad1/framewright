@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { Icon } from '@iconify/react'
+import { EmptyState } from '@/shared/ui/empty-state'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -38,24 +38,21 @@ function InspectorPanelView({ selection, onUpdateItem }: InspectorPanelProps) {
           Inspector
         </h2>
       </div>
-      <ScrollArea className="min-h-0 flex-1">
-        {!item ? (
-          <div className="flex flex-col items-center gap-2 p-8 text-center text-muted-foreground">
-            <Icon
-              icon="hugeicons:mouse-pointer-click"
-              className="size-6"
-              aria-hidden="true"
-            />
-            <p className="text-[0.9rem]">
-              {selection.length > 1
-                ? `${selection.length} items selected. Select one to edit.`
-                : 'Select a clip or text item to edit its properties.'}
-            </p>
-          </div>
-        ) : (
+      {!item ? (
+        <EmptyState
+          icon="hugeicons:mouse-pointer-click"
+          title="Nothing selected"
+          description={
+            selection.length > 1
+              ? `${selection.length} items selected. Select one to edit.`
+              : 'Select a clip or text item to edit its properties.'
+          }
+        />
+      ) : (
+        <ScrollArea className="min-h-0 flex-1">
           <ItemEditor item={item} onUpdateItem={onUpdateItem} />
-        )}
-      </ScrollArea>
+        </ScrollArea>
+      )}
     </aside>
   )
 }
@@ -95,7 +92,7 @@ function ItemEditor({
             onCommit={(scale) => update({ transform: { scale } })}
           />
           <div className="flex items-center gap-2">
-            <Label className="w-16 shrink-0 text-[0.9rem] text-muted-foreground">
+            <Label className="w-20 shrink-0 text-[0.9rem] text-muted-foreground">
               Framing
             </Label>
             <ToggleGroup
@@ -141,7 +138,7 @@ function ItemEditor({
             }}
           />
           <div className="flex items-center gap-2">
-            <Label className="w-16 shrink-0 text-[0.9rem] text-muted-foreground">
+            <Label className="w-20 shrink-0 text-[0.9rem] text-muted-foreground">
               Font
             </Label>
             <Select
@@ -173,7 +170,7 @@ function ItemEditor({
           <div className="flex items-center gap-2">
             <Label
               htmlFor="inspector-color"
-              className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
+              className="w-20 shrink-0 text-[0.9rem] text-muted-foreground"
             >
               Colour
             </Label>

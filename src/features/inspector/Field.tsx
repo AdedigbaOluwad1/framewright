@@ -47,7 +47,7 @@ export function NumberField({
     <div className="flex items-center gap-2">
       <Label
         htmlFor={id}
-        className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
+        className="w-20 shrink-0 text-[0.9rem] text-muted-foreground"
       >
         {label}
       </Label>
@@ -99,7 +99,7 @@ export function SliderField({
     <div className="flex items-center gap-2">
       <Label
         id={id}
-        className="w-16 shrink-0 text-[0.9rem] text-muted-foreground"
+        className="w-20 shrink-0 text-[0.9rem] text-muted-foreground"
       >
         {label}
       </Label>

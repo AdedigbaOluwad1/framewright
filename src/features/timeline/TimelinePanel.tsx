@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Icon } from '@iconify/react'
 import { formatTimecode } from '@/shared/lib/timecode'
 import { ClipBlock } from './ClipBlock'
 import { TimeRuler } from './TimeRuler'
@@ -92,7 +93,11 @@ export function TimelinePanel({
     doc.duration + TAIL_SECONDS,
     MIN_VISIBLE_SECONDS,
   )
-  const laneWidth = visibleDuration * pxPerSecond
+  const [viewportWidth, setViewportWidth] = useState(0)
+  const laneWidth = Math.max(
+    visibleDuration * pxPerSecond,
+    viewportWidth - HEADER_WIDTH,
+  )
   const selected = useMemo(() => new Set(selectedIds), [selectedIds])
   const scrollRef = useRef<HTMLDivElement>(null)
   const rulerRef = useRef<HTMLDivElement>(null)
@@ -153,6 +158,17 @@ export function TimelinePanel({
   }
 
   useEffect(() => {
+    const container = scrollRef.current
+    if (!container) return
+    const observer = new ResizeObserver(() =>
+      setViewportWidth(container.clientWidth),
+    )
+    observer.observe(container)
+    setViewportWidth(container.clientWidth)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     if (!isPlaying) return
     const container = scrollRef.current
     if (!container) return
@@ -211,7 +227,7 @@ export function TimelinePanel({
               onPointerCancel={handleScrubUp}
             >
               <TimeRuler
-                duration={visibleDuration}
+                duration={laneWidth / pxPerSecond}
                 pxPerSecond={pxPerSecond}
                 markIn={markIn}
                 markOut={markOut}
@@ -290,16 +306,23 @@ export function TimelinePanel({
           })}
 
           {doc.items.length === 0 ? (
-            <p
-              className="pointer-events-none absolute z-[4] flex items-center gap-2 text-[0.9rem] text-muted-foreground"
-              style={{
-                left: HEADER_WIDTH + 24,
-                top: 'calc(var(--ruler-height) + 20px)',
-              }}
+            <div
+              className="pointer-events-none absolute right-0 bottom-0 z-[4] flex flex-col items-center justify-center gap-2 px-6 text-center"
+              style={{ left: HEADER_WIDTH, top: 'var(--ruler-height)' }}
             >
-              Double-click a clip in the Media panel, or drop files anywhere, to
-              start your timeline.
-            </p>
+              <Icon
+                icon="hugeicons:film-01"
+                className="size-7 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <p className="text-[0.95rem] font-medium">
+                Your timeline is empty
+              </p>
+              <p className="max-w-sm text-[0.9rem] text-muted-foreground">
+                Double-click a clip in the Media panel, or drop files anywhere,
+                to start cutting.
+              </p>
+            </div>
           ) : null}
           {snapGuide !== null ? (
             <div

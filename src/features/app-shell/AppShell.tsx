@@ -23,6 +23,7 @@ import {
   TIMELINE_MIN_ZOOM,
   TimelinePanel,
 } from '@/features/timeline/TimelinePanel'
+import { rootFontPx, timelineFitHeight } from '@/features/timeline/layout'
 import type {
   MediaAsset,
   Seconds,
@@ -66,7 +67,7 @@ const LAYOUTS: Record<
   { rows: Record<string, number>; columns: Record<string, number> }
 > = {
   Editing: {
-    rows: { 'top-row': 58, timeline: 42 },
+    rows: { 'top-row': 62, timeline: 38 },
     columns: { project: 22, monitor: 52, inspector: 26 },
   },
   Audio: {
@@ -118,6 +119,7 @@ export function AppShell({
   const [announcement, setAnnouncement] = useState('')
   const [dragDepth, setDragDepth] = useState(0)
 
+  const [timelineFitPx] = useState(() => timelineFitHeight(4, rootFontPx()))
   const rowsGroup = useGroupRef()
   const columnsGroup = useGroupRef()
   const projectPanel = usePanelRef()
@@ -147,7 +149,16 @@ export function AppShell({
 
   function changeWorkspace(next: Workspace) {
     setWorkspace(next)
-    rowsGroup.current?.setLayout(LAYOUTS[next].rows)
+    const rows = { ...LAYOUTS[next].rows }
+    if (next === 'Editing') {
+      const total = document.getElementById('workspace-rows')?.clientHeight ?? 0
+      if (total > 0) {
+        const timeline = Math.min(60, (timelineFitPx / total) * 100)
+        rows.timeline = timeline
+        rows['top-row'] = 100 - timeline
+      }
+    }
+    rowsGroup.current?.setLayout(rows)
     columnsGroup.current?.setLayout(LAYOUTS[next].columns)
     setAnnouncement(`${next} workspace`)
     handlers.onWorkspaceChange(next)
@@ -333,7 +344,7 @@ export function AppShell({
           id="workspace-rows"
           groupRef={rowsGroup}
         >
-          <ResizablePanel id="top-row" defaultSize="58" minSize="30">
+          <ResizablePanel id="top-row" minSize="30">
             <ResizablePanelGroup
               orientation="horizontal"
               id="workspace-columns"
@@ -399,7 +410,7 @@ export function AppShell({
           <ResizablePanel
             id="timeline"
             panelRef={timelinePanel}
-            defaultSize="42"
+            defaultSize={`${timelineFitPx}px`}
             minSize="20"
             collapsible
             collapsedSize="0"
