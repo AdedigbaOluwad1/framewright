@@ -2,12 +2,97 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Framewright</title>
+    <title>Framewright | private video editor in your browser</title>
+    <meta
+      name="description"
+      content="Edit vertical videos for TikTok, Reels and Shorts in your browser. Nothing is uploaded: no account, no watermark. Cut, add text and music, export MP4 or WebM."
+    />
+    <meta name="application-name" content="Framewright" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://framewright.oluwadarasimi.me/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Framewright" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://framewright.oluwadarasimi.me/" />
+    <meta
+      property="og:title"
+      content="Framewright | private video editor in your browser"
+    />
+    <meta
+      property="og:description"
+      content="Cut vertical video. Keep it on your device. No uploads, no account, no watermark."
+    />
+    <meta
+      property="og:image"
+      content="https://framewright.oluwadarasimi.me/og.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Framewright: cut vertical video and keep it on your device"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Framewright | private video editor in your browser"
+    />
+    <meta
+      name="twitter:description"
+      content="Cut vertical video. Keep it on your device. No uploads, no account, no watermark."
+    />
+    <meta
+      name="twitter:image"
+      content="https://framewright.oluwadarasimi.me/og.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Framewright: cut vertical video and keep it on your device"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Framewright",
+        "url": "https://framewright.oluwadarasimi.me/",
+        "description": "A private, in-browser editor for short-form vertical video. Decoding, editing and encoding all happen on your device, so footage is never uploaded.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any desktop browser with WebCodecs, such as Chrome or Edge",
+        "browserRequirements": "Requires WebCodecs and a screen at least 1024 pixels wide",
+        "image": "https://framewright.oluwadarasimi.me/og.png",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main
+        style="
+          font-family: system-ui, sans-serif;
+          padding: 2rem;
+          max-width: 40rem;
+          margin: 0 auto;
+        "
+      >
+        <h1>Framewright</h1>
+        <p>
+          A private video editor for TikTok, Reels and Shorts that runs in your
+          browser. Nothing is uploaded, there is no account and no watermark.
+        </p>
+        <p>
+          Framewright needs JavaScript and a desktop browser with WebCodecs,
+          such as Chrome or Edge, to edit and export video.
+        </p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
