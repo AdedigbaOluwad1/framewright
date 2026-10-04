@@ -67,6 +67,10 @@ Single typed registry in `src/shared/shortcuts/registry.ts`. `useShortcuts` matc
 
 On a focused clip: Alt+Left and Alt+Right move it one frame, Alt+Shift+Left and Right trim the end, Ctrl or Cmd+Alt+Left and Right trim the start. A mouse click on a button releases its focus, so Space plays rather than re-pressing the button.
 
+## Screen size
+
+The editor needs at least 1024px of viewport width (large tablets in landscape and up). Below that, `ScreenGate` shows a friendly "we need a bigger screen" notice, hides the editor and makes it inert, and brings the editor back live if the window is resized wider. The threshold is `MIN_SCREEN_WIDTH` in `src/features/app-shell/ScreenGate.tsx`.
+
 ## Known limits
 
 - Containers mediabunny cannot read (AVI, FLV) are rejected with a hint. The ffmpeg.wasm remux fallback from the spec is not built.

@@ -1,15 +1,24 @@
 import { AppLoader } from '@/features/app-shell/AppLoader'
 import { AppShell } from '@/features/app-shell/AppShell'
+import {
+  SmallScreenNotice,
+  useIsLargeScreen,
+} from '@/features/app-shell/ScreenGate'
 import { useBoot } from '@/features/app-shell/useBoot'
 import { useEditorController } from '@/features/editor/useEditorController'
 
 export default function App() {
   const controller = useEditorController()
   const booted = useBoot({ ready: controller.hydrated })
+  const largeScreen = useIsLargeScreen()
 
   return (
     <>
-      <div className="h-full" inert={!booted}>
+      <div
+        className={largeScreen ? 'h-full' : 'hidden'}
+        inert={!booted || !largeScreen}
+        aria-hidden={!largeScreen}
+      >
         <AppShell
           doc={controller.doc}
           media={controller.media}
@@ -28,7 +37,7 @@ export default function App() {
           handlers={controller.handlers}
         />
       </div>
-      <AppLoader done={booted} />
+      {largeScreen ? <AppLoader done={booted} /> : <SmallScreenNotice />}
     </>
   )
 }

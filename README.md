@@ -83,7 +83,7 @@ Not measured yet.
 
 ## Known limitations
 
-- Desktop Chrome and Edge are the supported targets for v1.
+- Desktop Chrome and Edge are the supported targets for v1. The editor needs a viewport at least 1024px wide; smaller screens see a notice instead.
 - ffmpeg.wasm has a memory ceiling of around 2 GB, so input sizes are capped.
 
 ## Licensing
