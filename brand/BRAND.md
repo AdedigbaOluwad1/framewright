@@ -164,18 +164,18 @@ Paste-ready Tailwind v4 theme: `brand/tokens.css`. Mapping to the app's tokens: 
 
 All three are on Google Fonts. Self-host them, because cross-origin isolation blocks third-party font hosts. Timecode uses `font-variant-numeric: tabular-nums` so digits never shift as they tick.
 
-Scale on a 15 px root:
+Scale on a root of 90% (14.4 px at the browser default):
 
 | Token   | Size             | Use                               |
 | ------- | ---------------- | --------------------------------- |
-| 2xs     | 0.7 rem, 10.5 px | Ruler ticks, badges               |
-| xs      | 0.8 rem, 12 px   | Secondary labels                  |
-| sm      | 0.9 rem, 13.5 px | Default UI text                   |
-| base    | 1 rem, 15 px     | Body, inputs                      |
-| lg      | 1.2 rem, 18 px   | Panel titles, dialog titles       |
-| xl      | 1.5 rem, 22.5 px | Section headings                  |
-| 2xl     | 2 rem, 30 px     | Landing subheads (Sora 600)       |
-| display | 3 rem, 45 px     | Landing hero (Sora 600, -0.02 em) |
+| 2xs     | 0.7 rem, 10.1 px | Ruler ticks, badges               |
+| xs      | 0.8 rem, 11.5 px | Secondary labels                  |
+| sm      | 0.9 rem, 13 px   | Default UI text                   |
+| base    | 1 rem, 14.4 px   | Body, inputs                      |
+| lg      | 1.2 rem, 17.3 px | Panel titles, dialog titles       |
+| xl      | 1.5 rem, 21.6 px | Section headings                  |
+| 2xl     | 2 rem, 28.8 px   | Landing subheads (Sora 600)       |
+| display | 3 rem, 43.2 px   | Landing hero (Sora 600, -0.02 em) |
 
 ### Logo usage
 
