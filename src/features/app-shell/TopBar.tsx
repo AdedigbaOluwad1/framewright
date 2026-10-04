@@ -40,6 +40,8 @@ interface TopBarProps {
   onImportFiles: (files: File[]) => void
   onWorkspaceChange: (workspace: Workspace) => void
   onToggleTheme: () => void
+  onOpenShortcuts: () => void
+  onOpenDiagnostics: () => void
   onTogglePanel: (panel: 'project' | 'inspector' | 'timeline') => void
 }
 
@@ -55,6 +57,8 @@ export function TopBar({
   onImportFiles,
   onWorkspaceChange,
   onToggleTheme,
+  onOpenShortcuts,
+  onOpenDiagnostics,
   onTogglePanel,
 }: TopBarProps) {
   const fileInput = useRef<HTMLInputElement>(null)
@@ -125,7 +129,14 @@ export function TopBar({
         </MenubarMenu>
         <MenubarMenu>
           <MenubarTrigger className="text-[0.9rem]">Help</MenubarTrigger>
-          <MenubarContent>{actionItem('commandPalette')}</MenubarContent>
+          <MenubarContent>
+            <MenubarItem onSelect={onOpenShortcuts}>
+              Keyboard shortcuts
+            </MenubarItem>
+            {actionItem('commandPalette')}
+            <MenubarSeparator />
+            <MenubarItem onSelect={onOpenDiagnostics}>Diagnostics</MenubarItem>
+          </MenubarContent>
         </MenubarMenu>
       </Menubar>
 

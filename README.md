@@ -2,7 +2,7 @@
 
 A private, no-account, no-watermark short-form video editor that runs entirely in the browser. Footage is never uploaded: decoding, editing and encoding all happen on your device.
 
-> Status: early development (M0 spike). Not usable yet.
+> Status: working editor. Import, edit, preview, export and local saving all run in the browser.
 
 ## Why
 
@@ -56,21 +56,30 @@ npm run dev
 
 The dev and preview servers send COOP/COEP headers so `crossOriginIsolated` is true, which multithreaded ffmpeg.wasm needs. Self-host fonts and assets, since cross-origin isolation blocks most third-party embeds.
 
-## UI shell
+## What works
 
-The interface is built and driven by mock data. See [WIRE.md](WIRE.md) for every callback, prop and shortcut you need to connect.
+- Import video, audio and images by browsing, dropping anywhere, or the File menu. Files stay on your device.
+- Single-timeline editing: trim, split, razor, drag to reorder, ripple delete, snapping, keyboard nudging, undo and redo.
+- Text overlays, music and voice-over, per-clip volume and speed, fit, fill and crop framing.
+- Preview with synced audio, scrubbing, loop with in and out marks, J K L shuttle.
+- Export to MP4 (H.264 and AAC) or WebM (VP9 and Opus) with Shorts, Reels and TikTok presets, progress and cancel.
+- Autosave to IndexedDB and OPFS, restored on reload, with a clear local data control.
+
+See [WIRE.md](WIRE.md) for how every action is wired and the known limits.
 
 ## Roadmap
 
-- [ ] M0: spike (import, decode to canvas, WebCodecs encode, ffmpeg.wasm hello-world, first benchmark)
-- [ ] M1: core editing (timeline, trim/split/reorder, preview with audio sync, undo/redo)
-- [ ] M2: export (engine router, presets, progress/cancel, parity tests)
-- [ ] M3: creator features (text, music, 9:16 fit/fill/crop, speed)
-- [ ] M4: persistence and polish (local projects, diagnostics, landing page, benchmarks)
+- [x] Core editing: timeline, trim, split, reorder, preview with audio sync, undo and redo
+- [x] Export: presets, progress and cancel (WebCodecs path)
+- [x] Creator features: text, music, fit, fill and crop, speed
+- [x] Persistence: local project, diagnostics
+- [ ] ffmpeg.wasm fallback and remux for AVI and FLV
+- [ ] Export in a worker and preview and export parity tests
+- [ ] Benchmarks and landing page
 
 ## Benchmarks
 
-Coming with M0.
+Not measured yet.
 
 ## Known limitations
 

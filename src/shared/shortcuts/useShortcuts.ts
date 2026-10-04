@@ -17,15 +17,31 @@ function isEditableTarget(target: EventTarget | null): boolean {
   )
 }
 
-const NAVIGATION_KEYS = new Set([' ', 'ArrowLeft', 'ArrowRight', 'Home', 'End'])
+const SPACE_OWNER_SELECTOR =
+  'button, a, [role="slider"], [role="tab"], [role="option"], [role="menuitem"], [role="switch"], [role="checkbox"], [role="radio"], [role="dialog"], [role="menu"]'
 
-const KEY_OWNER_SELECTOR =
-  'button, a, [role="slider"], [role="tab"], [role="option"], [role="menuitem"], [role="listbox"], [role="separator"], [role="switch"], [role="checkbox"], [role="radio"], [role="dialog"], [role="menu"]'
+const ARROW_OWNER_SELECTOR =
+  '[role="slider"], [role="tab"], [role="option"], [role="menuitem"], [role="listbox"], [role="separator"], [role="radio"], [role="radiogroup"], [role="dialog"], [role="menu"]'
+
+const RETAIN_FOCUS_SELECTOR =
+  '[role="dialog"], [role="menu"], [role="menubar"], [role="listbox"], [role="tablist"], [role="combobox"]'
+
+const ARROW_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'Home', 'End'])
+
+function isMouseFocusedControl(target: HTMLElement): boolean {
+  const control = target.closest('button, a')
+  return control !== null && !control.matches(':focus-visible')
+}
 
 function targetOwnsKey(event: KeyboardEvent): boolean {
-  if (!NAVIGATION_KEYS.has(event.key)) return false
   if (!(event.target instanceof HTMLElement)) return false
-  return event.target.closest(KEY_OWNER_SELECTOR) !== null
+  if (event.key === ' ') {
+    if (isMouseFocusedControl(event.target)) return false
+    return event.target.closest(SPACE_OWNER_SELECTOR) !== null
+  }
+  if (ARROW_KEYS.has(event.key))
+    return event.target.closest(ARROW_OWNER_SELECTOR) !== null
+  return false
 }
 
 function matchesChord(event: KeyboardEvent, chord: KeyChord): boolean {
@@ -68,7 +84,17 @@ export function useShortcuts(handlers: ActionHandlers, enabled = true) {
       event.preventDefault()
       handlersRef.current[def.id]()
     }
+    function releaseFocusAfterMouseClick(event: MouseEvent) {
+      if (event.detail === 0 || !(event.target instanceof HTMLElement)) return
+      const button = event.target.closest('button')
+      if (!button || button.closest(RETAIN_FOCUS_SELECTOR)) return
+      requestAnimationFrame(() => button.blur())
+    }
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    window.addEventListener('click', releaseFocusAfterMouseClick)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('click', releaseFocusAfterMouseClick)
+    }
   }, [enabled])
 }

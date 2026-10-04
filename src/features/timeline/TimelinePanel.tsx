@@ -1,10 +1,15 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { formatTimecode } from '@/shared/lib/timecode'
 import { ClipBlock } from './ClipBlock'
 import { TimeRuler } from './TimeRuler'
 import { TimelineToolbar } from './TimelineToolbar'
 import { TrackHeader } from './TrackHeader'
+import {
+  useTimelineGestures,
+  type GestureCallbacks,
+} from './useTimelineGestures'
 import type {
+  MediaAsset,
   Seconds,
   TimelineDocument,
   TimelineTool,
@@ -15,13 +20,19 @@ import type {
 export const TIMELINE_MIN_ZOOM = 8
 export const TIMELINE_MAX_ZOOM = 160
 
-export interface TimelinePanelProps {
+export interface TimelinePanelProps extends Omit<GestureCallbacks, 'onSelect'> {
   doc: TimelineDocument
+  media: MediaAsset[]
   playheadTime: Seconds
+  isPlaying: boolean
+  markIn: Seconds | null
+  markOut: Seconds | null
   selectedIds: string[]
   tool: TimelineTool
   snapEnabled: boolean
   pxPerSecond: number
+  canUndo: boolean
+  canRedo: boolean
   onSeek: (time: Seconds) => void
   onStepFrame: (delta: -1 | 1) => void
   onJumpToStart: () => void
@@ -32,27 +43,31 @@ export interface TimelinePanelProps {
   onZoomChange: (pxPerSecond: number) => void
   onSplit: () => void
   onRippleDelete: () => void
+  onDelete: () => void
+  onUndo: () => void
+  onRedo: () => void
   onToggleTrack: (trackId: string, toggle: TrackToggle) => void
-  onClipPointerDown: (itemId: string, event: React.PointerEvent) => void
-  onTrimHandlePointerDown: (
-    itemId: string,
-    edge: TrimEdge,
-    event: React.PointerEvent,
-  ) => void
   onKeyboardTrim: (itemId: string, edge: TrimEdge, deltaFrames: number) => void
   onKeyboardMove: (itemId: string, deltaFrames: number) => void
 }
 
 const HEADER_WIDTH = 176
 const TAIL_SECONDS = 8
+const MIN_VISIBLE_SECONDS = 30
 
 export function TimelinePanel({
   doc,
+  media,
   playheadTime,
+  isPlaying,
+  markIn,
+  markOut,
   selectedIds,
   tool,
   snapEnabled,
   pxPerSecond,
+  canUndo,
+  canRedo,
   onSeek,
   onStepFrame,
   onJumpToStart,
@@ -63,15 +78,25 @@ export function TimelinePanel({
   onZoomChange,
   onSplit,
   onRippleDelete,
+  onDelete,
+  onUndo,
+  onRedo,
   onToggleTrack,
-  onClipPointerDown,
-  onTrimHandlePointerDown,
   onKeyboardTrim,
   onKeyboardMove,
+  onItemDrag,
+  onItemTrim,
+  onSplitAt,
 }: TimelinePanelProps) {
-  const visibleDuration = doc.duration + TAIL_SECONDS
+  const visibleDuration = Math.max(
+    doc.duration + TAIL_SECONDS,
+    MIN_VISIBLE_SECONDS,
+  )
   const laneWidth = visibleDuration * pxPerSecond
   const selected = useMemo(() => new Set(selectedIds), [selectedIds])
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const rulerRef = useRef<HTMLDivElement>(null)
+  const scrubbing = useRef(false)
 
   function handleSelect(itemId: string, additive: boolean) {
     if (!additive) return onSelectionChange([itemId])
@@ -82,6 +107,42 @@ export function TimelinePanel({
     )
   }
 
+  const { snapGuide, beginMove, beginTrim } = useTimelineGestures({
+    doc,
+    pxPerSecond,
+    snapEnabled,
+    playheadTime,
+    markIn,
+    markOut,
+    selectedIds,
+    tool,
+    onSelect: handleSelect,
+    onItemDrag,
+    onItemTrim,
+    onSplitAt,
+  })
+
+  function timeFromPointer(clientX: number): Seconds {
+    const rect = rulerRef.current?.getBoundingClientRect()
+    if (!rect) return 0
+    return Math.max(0, (clientX - rect.left) / pxPerSecond)
+  }
+
+  function handleScrubDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    scrubbing.current = true
+    onSeek(timeFromPointer(event.clientX))
+  }
+
+  function handleScrubMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (scrubbing.current) onSeek(timeFromPointer(event.clientX))
+  }
+
+  function handleScrubUp() {
+    scrubbing.current = false
+  }
+
   function handlePlayheadKeyDown(event: React.KeyboardEvent) {
     if (event.key === 'ArrowLeft') onStepFrame(-1)
     else if (event.key === 'ArrowRight') onStepFrame(1)
@@ -90,6 +151,17 @@ export function TimelinePanel({
     else return
     event.preventDefault()
   }
+
+  useEffect(() => {
+    if (!isPlaying) return
+    const container = scrollRef.current
+    if (!container) return
+    const x = playheadTime * pxPerSecond
+    const viewStart = container.scrollLeft
+    const viewEnd = container.scrollLeft + container.clientWidth - HEADER_WIDTH
+    if (x > viewEnd - 40) container.scrollLeft = Math.max(0, x - 80)
+    else if (x < viewStart) container.scrollLeft = Math.max(0, x - 80)
+  }, [isPlaying, playheadTime, pxPerSecond])
 
   const playheadX = playheadTime * pxPerSecond
 
@@ -105,13 +177,18 @@ export function TimelinePanel({
         minZoom={TIMELINE_MIN_ZOOM}
         maxZoom={TIMELINE_MAX_ZOOM}
         hasSelection={selectedIds.length > 0}
+        canUndo={canUndo}
+        canRedo={canRedo}
         onSelectTool={onSelectTool}
         onSplit={onSplit}
         onRippleDelete={onRippleDelete}
+        onDelete={onDelete}
+        onUndo={onUndo}
+        onRedo={onRedo}
         onToggleSnap={onToggleSnap}
         onZoomChange={onZoomChange}
       />
-      <div className="relative min-h-0 flex-1 overflow-auto">
+      <div ref={scrollRef} className="relative min-h-0 flex-1 overflow-auto">
         <div
           className="relative"
           style={{ width: HEADER_WIDTH + laneWidth, minWidth: '100%' }}
@@ -125,11 +202,19 @@ export function TimelinePanel({
                 {formatTimecode(playheadTime, doc.fps)}
               </span>
             </div>
-            <div className="relative">
+            <div
+              ref={rulerRef}
+              className="relative touch-none"
+              onPointerDown={handleScrubDown}
+              onPointerMove={handleScrubMove}
+              onPointerUp={handleScrubUp}
+              onPointerCancel={handleScrubUp}
+            >
               <TimeRuler
                 duration={visibleDuration}
                 pxPerSecond={pxPerSecond}
-                onSeek={onSeek}
+                markIn={markIn}
+                markOut={markOut}
               />
               <div
                 role="slider"
@@ -174,9 +259,8 @@ export function TimelinePanel({
                   className="relative border-b border-border bg-surface-0/60"
                   style={{ width: laneWidth }}
                   onPointerDown={(event) => {
-                    if (event.target === event.currentTarget) {
+                    if (event.target === event.currentTarget)
                       onSelectionChange([])
-                    }
                   }}
                 >
                   {items.map((item) => (
@@ -184,13 +268,18 @@ export function TimelinePanel({
                       key={item.id}
                       item={item}
                       track={track}
+                      asset={
+                        item.kind === 'text'
+                          ? undefined
+                          : media.find((asset) => asset.id === item.mediaId)
+                      }
                       pxPerSecond={pxPerSecond}
                       selected={selected.has(item.id)}
                       tabbable={item.id === tabbableId}
                       tool={tool}
                       onSelect={handleSelect}
-                      onPointerDown={onClipPointerDown}
-                      onTrimHandlePointerDown={onTrimHandlePointerDown}
+                      onBeginMove={beginMove}
+                      onBeginTrim={beginTrim}
                       onKeyboardTrim={onKeyboardTrim}
                       onKeyboardMove={onKeyboardMove}
                     />
@@ -200,6 +289,25 @@ export function TimelinePanel({
             )
           })}
 
+          {doc.items.length === 0 ? (
+            <p
+              className="pointer-events-none absolute z-[4] flex items-center gap-2 text-[0.9rem] text-muted-foreground"
+              style={{
+                left: HEADER_WIDTH + 24,
+                top: 'calc(var(--ruler-height) + 20px)',
+              }}
+            >
+              Double-click a clip in the Media panel, or drop files anywhere, to
+              start your timeline.
+            </p>
+          ) : null}
+          {snapGuide !== null ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute top-0 bottom-0 z-[6] w-px bg-foreground"
+              style={{ left: HEADER_WIDTH + snapGuide * pxPerSecond }}
+            />
+          ) : null}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute top-0 bottom-0 z-[5] w-px bg-playhead"

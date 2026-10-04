@@ -73,6 +73,10 @@ export interface MediaAsset {
   width?: number
   height?: number
   sizeBytes: number
+  hasAudio: boolean
+  mimeType?: string
+  peaks?: number[]
+  thumbnailUrl?: string
 }
 
 export interface TimelineDocument {

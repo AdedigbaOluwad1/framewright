@@ -4,28 +4,47 @@ import type { Seconds } from './types'
 interface TimeRulerProps {
   duration: Seconds
   pxPerSecond: number
-  onSeek: (time: Seconds) => void
+  markIn: Seconds | null
+  markOut: Seconds | null
 }
 
 const MAJOR_STEPS = [1, 2, 5, 10, 15, 30, 60]
 
-export function TimeRuler({ duration, pxPerSecond, onSeek }: TimeRulerProps) {
+export function TimeRuler({
+  duration,
+  pxPerSecond,
+  markIn,
+  markOut,
+}: TimeRulerProps) {
   const majorStep = MAJOR_STEPS.find((step) => step * pxPerSecond >= 64) ?? 60
   const majorCount = Math.ceil(duration / majorStep) + 1
   const width = duration * pxPerSecond
-
-  function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect()
-    onSeek(Math.max(0, (event.clientX - rect.left) / pxPerSecond))
-  }
+  const rangeStart = markIn ?? 0
+  const rangeEnd = markOut ?? duration
 
   return (
     <div
       role="presentation"
       className="relative h-[var(--ruler-height)] cursor-text border-b border-border bg-surface-2"
       style={{ width }}
-      onPointerDown={handlePointerDown}
     >
+      {markIn !== null || markOut !== null ? (
+        <div
+          aria-hidden="true"
+          className="absolute inset-y-0 bg-accent-soft"
+          style={{
+            left: rangeStart * pxPerSecond,
+            width: Math.max(2, (rangeEnd - rangeStart) * pxPerSecond),
+          }}
+        >
+          {markIn !== null ? (
+            <div className="absolute inset-y-0 left-0 w-0.5 bg-foreground" />
+          ) : null}
+          {markOut !== null ? (
+            <div className="absolute inset-y-0 right-0 w-0.5 bg-foreground" />
+          ) : null}
+        </div>
+      ) : null}
       {Array.from({ length: majorCount }, (_, i) => {
         const time = i * majorStep
         return (

@@ -1,8 +1,10 @@
+import { memo } from 'react'
 import { Icon } from '@iconify/react'
 import { Button } from '@/shared/ui/button'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { formatDuration } from '@/shared/lib/timecode'
+import type { TextPreset } from '@/features/editor/store'
 import type { MediaAsset } from '@/features/timeline/types'
 import { ImportDropzone } from './ImportDropzone'
 import { MediaCard } from './MediaCard'
@@ -10,13 +12,37 @@ import { MediaCard } from './MediaCard'
 export interface ProjectPanelProps {
   media: MediaAsset[]
   onImportFiles: (files: File[]) => void
-  onAddMediaToTimeline: (mediaId: string) => void
-  onAddTextItem: () => void
+  onAddMediaToTimeline: (mediaId: string, track?: 'audio' | 'music') => void
+  onAddTextItem: (preset: TextPreset) => void
 }
 
-const TEXT_PRESETS = ['Title', 'Subtitle', 'Caption']
+const TEXT_PRESETS: {
+  id: TextPreset
+  label: string
+  sample: string
+  className: string
+}[] = [
+  {
+    id: 'title',
+    label: 'Title',
+    sample: 'Big title',
+    className: 'text-2xl font-semibold',
+  },
+  {
+    id: 'subtitle',
+    label: 'Subtitle',
+    sample: 'A supporting line',
+    className: 'text-lg font-medium',
+  },
+  {
+    id: 'caption',
+    label: 'Caption',
+    sample: 'Lower-third caption',
+    className: 'text-sm font-medium',
+  },
+]
 
-export function ProjectPanel({
+function ProjectPanelView({
   media,
   onImportFiles,
   onAddMediaToTimeline,
@@ -80,22 +106,25 @@ export function ProjectPanel({
 
         <TabsContent value="text" className="min-h-0 flex-1">
           <ScrollArea className="h-full">
-            <ul className="flex flex-col gap-2.5 p-4">
+            <ul className="flex flex-col gap-3 p-4">
               {TEXT_PRESETS.map((preset) => (
-                <li key={preset}>
-                  <Button
-                    variant="outline"
-                    className="h-12 w-full justify-start gap-2 text-[0.95rem]"
-                    onClick={onAddTextItem}
+                <li key={preset.id}>
+                  <button
+                    type="button"
+                    onClick={() => onAddTextItem(preset.id)}
+                    className="group flex w-full flex-col gap-2 rounded-xl border border-border bg-surface-2 p-4 text-left outline-none transition-colors hover:bg-accent-soft focus-visible:ring-2 focus-visible:ring-ring"
+                    aria-label={`Add ${preset.label} text at the playhead`}
                   >
-                    <Icon icon="hugeicons:text-font" aria-hidden="true" />{' '}
-                    {preset}
-                    <Icon
-                      icon="hugeicons:add-01"
-                      className="ml-auto"
-                      aria-hidden="true"
-                    />
-                  </Button>
+                    <span className="flex items-center justify-between text-[0.8rem] text-muted-foreground">
+                      {preset.label}
+                      <Icon
+                        icon="hugeicons:add-01"
+                        className="size-4"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span className={preset.className}>{preset.sample}</span>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -106,23 +135,45 @@ export function ProjectPanel({
           <ScrollArea className="h-full">
             <div className="flex flex-col gap-4 p-4">
               <ImportDropzone compact onImportFiles={onImportFiles} />
-              <ul className="flex flex-col gap-1">
-                {audio.map((asset) => (
-                  <li key={asset.id}>
-                    <Button
-                      variant="ghost"
-                      className="h-11 w-full justify-start gap-2 text-[0.9rem]"
-                      aria-label={`Add ${asset.name} to timeline`}
-                      onClick={() => onAddMediaToTimeline(asset.id)}
+              {audio.length === 0 ? (
+                <p className="px-1 text-center text-[0.9rem] text-muted-foreground">
+                  Import audio to add voice-over or music.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {audio.map((asset) => (
+                    <li
+                      key={asset.id}
+                      className="flex items-center gap-2 rounded-xl border border-border bg-surface-2 p-2 pl-3"
                     >
-                      <span className="truncate">{asset.name}</span>
-                      <span className="tabular ml-auto text-muted-foreground">
-                        {formatDuration(asset.duration)}
-                      </span>
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[0.9rem] font-medium">
+                          {asset.name}
+                        </p>
+                        <p className="tabular text-[0.8rem] text-muted-foreground">
+                          {formatDuration(asset.duration)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        aria-label={`Add ${asset.name} as audio at the playhead`}
+                        onClick={() => onAddMediaToTimeline(asset.id, 'audio')}
+                      >
+                        Voice
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        aria-label={`Add ${asset.name} as music at the playhead`}
+                        onClick={() => onAddMediaToTimeline(asset.id, 'music')}
+                      >
+                        Music
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </ScrollArea>
         </TabsContent>
@@ -130,3 +181,5 @@ export function ProjectPanel({
     </section>
   )
 }
+
+export const ProjectPanel = memo(ProjectPanelView)

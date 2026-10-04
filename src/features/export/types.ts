@@ -13,7 +13,7 @@ export interface ExportSettings {
 
 export type ExportStatus =
   | { phase: 'idle' }
-  | { phase: 'running'; progress: number; etaSeconds: number }
-  | { phase: 'done'; sizeBytes: number }
+  | { phase: 'running'; progress: number; etaSeconds: number; label: string }
+  | { phase: 'done'; sizeBytes: number; fileName: string }
   | { phase: 'cancelled' }
   | { phase: 'error'; message: string }

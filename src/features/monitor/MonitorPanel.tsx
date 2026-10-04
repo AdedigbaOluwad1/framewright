@@ -9,13 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
+import type { PlaybackState } from '@/engine/preview'
 import type { Seconds } from '@/features/timeline/types'
-
-export interface PlaybackState {
-  isPlaying: boolean
-  currentTime: Seconds
-  loop: boolean
-}
 
 export interface MonitorPanelProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>
@@ -140,7 +135,7 @@ export function MonitorPanel({
           className="tabular text-[0.95rem] text-foreground"
           aria-label="Current time"
         >
-          {formatTimecode(playback.currentTime, fps)}
+          {formatTimecode(playback.time, fps)}
         </div>
         <div className="flex items-center gap-1">
           <IconButton

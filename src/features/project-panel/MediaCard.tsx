@@ -11,7 +11,7 @@ import type { MediaAsset } from '@/features/timeline/types'
 
 interface MediaCardProps {
   asset: MediaAsset
-  onAddToTimeline: (mediaId: string) => void
+  onAddToTimeline: (mediaId: string, track?: 'audio' | 'music') => void
 }
 
 const ICONS = {
@@ -38,12 +38,20 @@ export function MediaCard({ asset, onAddToTimeline }: MediaCardProps) {
             if (event.key === 'Enter') onAddToTimeline(asset.id)
           }}
         >
-          <div className="relative flex aspect-video items-center justify-center rounded-lg bg-surface-0 text-muted-foreground">
-            <Icon
-              icon={ICONS[asset.kind]}
-              className="size-7"
-              aria-hidden="true"
-            />
+          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-lg bg-surface-0 text-muted-foreground">
+            {asset.thumbnailUrl ? (
+              <img
+                src={asset.thumbnailUrl}
+                alt=""
+                className="absolute inset-0 size-full object-cover"
+              />
+            ) : (
+              <Icon
+                icon={ICONS[asset.kind]}
+                className="size-7"
+                aria-hidden="true"
+              />
+            )}
             <Badge
               variant="secondary"
               className="tabular absolute right-1 bottom-1 h-5 rounded-md px-1.5 text-[0.7rem]"

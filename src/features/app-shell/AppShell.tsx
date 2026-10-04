@@ -1,21 +1,22 @@
 import { useMemo, useState } from 'react'
+import { Icon } from '@iconify/react'
+import { useGroupRef, usePanelRef } from 'react-resizable-panels'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/shared/ui/resizable'
+import { ConfirmDialog } from '@/shared/ui/confirm-dialog'
 import { Toaster } from '@/shared/ui/sonner'
-import { usePanelRef } from 'react-resizable-panels'
+import type { Capabilities } from '@/engine/capabilities'
+import type { PlaybackState } from '@/engine/preview'
 import {
   ExportDialog,
   type ExportEstimate,
 } from '@/features/export/ExportDialog'
 import type { ExportSettings, ExportStatus } from '@/features/export/types'
 import { InspectorPanel } from '@/features/inspector/InspectorPanel'
-import {
-  MonitorPanel,
-  type PlaybackState,
-} from '@/features/monitor/MonitorPanel'
+import { MonitorPanel } from '@/features/monitor/MonitorPanel'
 import { ProjectPanel } from '@/features/project-panel/ProjectPanel'
 import {
   TIMELINE_MAX_ZOOM,
@@ -24,23 +25,33 @@ import {
 } from '@/features/timeline/TimelinePanel'
 import type {
   MediaAsset,
+  Seconds,
   TimelineDocument,
   TimelineTool,
 } from '@/features/timeline/types'
 import { useTheme } from '@/shared/hooks/useTheme'
-import type { ActionHandlers } from '@/shared/shortcuts/registry'
+import { SHORTCUTS, type ActionHandlers } from '@/shared/shortcuts/registry'
 import { useShortcuts } from '@/shared/shortcuts/useShortcuts'
-import { CommandPalette } from './CommandPalette'
+import type { SaveStatus } from '@/storage/projectStorage'
+import { CommandPalette, type PaletteCommand } from './CommandPalette'
+import { DiagnosticsDialog } from './DiagnosticsDialog'
 import type { EditorHandlers } from './handlers'
+import { ShortcutsDialog } from './ShortcutsDialog'
 import { StatusBar } from './StatusBar'
 import { TopBar } from './TopBar'
-import type { Diagnostics, Workspace } from './types'
+import { WORKSPACES, type Workspace } from './types'
 
 export interface AppShellProps {
   doc: TimelineDocument
   media: MediaAsset[]
+  selectedIds: string[]
   playback: PlaybackState
-  diagnostics: Diagnostics
+  markIn: Seconds | null
+  markOut: Seconds | null
+  canUndo: boolean
+  canRedo: boolean
+  capabilities: Capabilities | null
+  saveStatus: SaveStatus
   canvasRef: React.RefObject<HTMLCanvasElement | null>
   exportStatus: ExportStatus
   exportEstimate: ExportEstimate | null
@@ -50,11 +61,44 @@ export interface AppShellProps {
 
 const DEFAULT_ZOOM = 24
 
+const LAYOUTS: Record<
+  Workspace,
+  { rows: Record<string, number>; columns: Record<string, number> }
+> = {
+  Editing: {
+    rows: { 'top-row': 58, timeline: 42 },
+    columns: { project: 22, monitor: 52, inspector: 26 },
+  },
+  Audio: {
+    rows: { 'top-row': 44, timeline: 56 },
+    columns: { project: 24, monitor: 44, inspector: 32 },
+  },
+  Titles: {
+    rows: { 'top-row': 64, timeline: 36 },
+    columns: { project: 18, monitor: 48, inspector: 34 },
+  },
+}
+
+const PALETTE_GROUPS = [
+  'Playback',
+  'Edit',
+  'Timeline',
+  'Project',
+  'View',
+  'Help',
+]
+
 export function AppShell({
   doc,
   media,
+  selectedIds,
   playback,
-  diagnostics,
+  markIn,
+  markOut,
+  canUndo,
+  canRedo,
+  capabilities,
+  saveStatus,
   canvasRef,
   exportStatus,
   exportEstimate,
@@ -62,15 +106,20 @@ export function AppShell({
   handlers,
 }: AppShellProps) {
   const { theme, toggleTheme } = useTheme('dark')
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [tool, setTool] = useState<TimelineTool>('select')
   const [snapEnabled, setSnapEnabled] = useState(true)
   const [pxPerSecond, setPxPerSecond] = useState(DEFAULT_ZOOM)
   const [workspace, setWorkspace] = useState<Workspace>('Editing')
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false)
+  const [confirm, setConfirm] = useState<'new' | 'clear' | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [dragDepth, setDragDepth] = useState(0)
 
+  const rowsGroup = useGroupRef()
+  const columnsGroup = useGroupRef()
   const projectPanel = usePanelRef()
   const inspectorPanel = usePanelRef()
   const timelinePanel = usePanelRef()
@@ -80,33 +129,28 @@ export function AppShell({
     [doc.items, selectedIds],
   )
 
-  function changeSelection(ids: string[]) {
-    setSelectedIds(ids)
-    setAnnouncement(
-      `${ids.length} ${ids.length === 1 ? 'item' : 'items'} selected`,
-    )
-    handlers.onSelectionChange(ids)
-  }
-
   function changeTool(next: TimelineTool) {
     setTool(next)
     setAnnouncement(`${next === 'razor' ? 'Razor' : 'Select'} tool active`)
-    handlers.onSelectTool(next)
   }
 
   function changeSnap(enabled: boolean) {
     setSnapEnabled(enabled)
     setAnnouncement(`Snapping ${enabled ? 'on' : 'off'}`)
-    handlers.onToggleSnap(enabled)
   }
 
   function changeZoom(next: number) {
-    const clamped = Math.min(
-      TIMELINE_MAX_ZOOM,
-      Math.max(TIMELINE_MIN_ZOOM, next),
+    setPxPerSecond(
+      Math.min(TIMELINE_MAX_ZOOM, Math.max(TIMELINE_MIN_ZOOM, next)),
     )
-    setPxPerSecond(clamped)
-    handlers.onTimelineZoomChange(clamped)
+  }
+
+  function changeWorkspace(next: Workspace) {
+    setWorkspace(next)
+    rowsGroup.current?.setLayout(LAYOUTS[next].rows)
+    columnsGroup.current?.setLayout(LAYOUTS[next].columns)
+    setAnnouncement(`${next} workspace`)
+    handlers.onWorkspaceChange(next)
   }
 
   function togglePanel(panel: 'project' | 'inspector' | 'timeline') {
@@ -119,8 +163,9 @@ export function AppShell({
     else ref.current?.collapse()
   }
 
-  function openExport() {
-    setExportOpen(true)
+  function requestNewProject() {
+    if (doc.items.length === 0 && media.length === 0) handlers.onNewProject()
+    else setConfirm('new')
   }
 
   const actions: ActionHandlers = {
@@ -146,13 +191,119 @@ export function AppShell({
     toolRazor: () => changeTool('razor'),
     toggleSnap: () => changeSnap(!snapEnabled),
     toggleLoop: () => handlers.onToggleLoop(!playback.loop),
-    export: openExport,
+    export: () => setExportOpen(true),
   }
 
-  useShortcuts(actions, !exportOpen)
+  const anyDialogOpen =
+    exportOpen || shortcutsOpen || diagnosticsOpen || confirm !== null
+  useShortcuts(actions, !anyDialogOpen)
+
+  const commands: PaletteCommand[] = (() => {
+    const fromRegistry: PaletteCommand[] = Object.values(SHORTCUTS)
+      .filter((def) => def.id !== 'commandPalette' && def.id !== 'export')
+      .map((def) => ({
+        id: def.id,
+        label: def.label,
+        group: def.group === 'App' ? 'Project' : def.group,
+        shortcut: def.display,
+        run: actions[def.id],
+      }))
+    return [
+      ...fromRegistry,
+      {
+        id: 'export',
+        label: 'Export video…',
+        group: 'Project',
+        shortcut: SHORTCUTS.export.display,
+        run: actions.export,
+      },
+      {
+        id: 'new',
+        label: 'New project',
+        group: 'Project',
+        run: requestNewProject,
+      },
+      {
+        id: 'save',
+        label: 'Save project now',
+        group: 'Project',
+        run: handlers.onSaveProject,
+      },
+      {
+        id: 'clear',
+        label: 'Clear local data…',
+        group: 'Project',
+        run: () => setConfirm('clear'),
+      },
+      {
+        id: 'theme',
+        label:
+          theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
+        group: 'View',
+        run: toggleTheme,
+      },
+      {
+        id: 'panel-project',
+        label: 'Toggle project panel',
+        group: 'View',
+        run: () => togglePanel('project'),
+      },
+      {
+        id: 'panel-inspector',
+        label: 'Toggle inspector',
+        group: 'View',
+        run: () => togglePanel('inspector'),
+      },
+      {
+        id: 'panel-timeline',
+        label: 'Toggle timeline',
+        group: 'View',
+        run: () => togglePanel('timeline'),
+      },
+      ...WORKSPACES.map((name) => ({
+        id: `workspace-${name}`,
+        label: `Workspace: ${name}`,
+        group: 'View',
+        run: () => changeWorkspace(name),
+      })),
+      {
+        id: 'shortcuts',
+        label: 'Keyboard shortcuts',
+        group: 'Help',
+        run: () => setShortcutsOpen(true),
+      },
+      {
+        id: 'diagnostics',
+        label: 'Diagnostics',
+        group: 'Help',
+        run: () => setDiagnosticsOpen(true),
+      },
+    ]
+  })()
+
+  function hasFiles(event: React.DragEvent) {
+    return Array.from(event.dataTransfer.types).includes('Files')
+  }
 
   return (
-    <div className="flex h-full flex-col bg-background text-[0.95rem]">
+    <div
+      className="relative flex h-full flex-col bg-background text-[0.95rem]"
+      onDragEnter={(event) => {
+        if (hasFiles(event)) setDragDepth((depth) => depth + 1)
+      }}
+      onDragLeave={(event) => {
+        if (hasFiles(event)) setDragDepth((depth) => Math.max(0, depth - 1))
+      }}
+      onDragOver={(event) => {
+        if (hasFiles(event)) event.preventDefault()
+      }}
+      onDrop={(event) => {
+        if (!hasFiles(event)) return
+        event.preventDefault()
+        setDragDepth(0)
+        handlers.onImportFiles(Array.from(event.dataTransfer.files))
+      }}
+    >
       <a
         href="#timeline-region"
         className="sr-only focus:not-sr-only focus:absolute focus:top-1 focus:left-1 focus:z-50 focus:rounded focus:bg-primary focus:px-2 focus:py-1 focus:text-primary-foreground"
@@ -165,24 +316,28 @@ export function AppShell({
         theme={theme}
         actions={actions}
         onRenameProject={handlers.onRenameProject}
-        onNewProject={handlers.onNewProject}
+        onNewProject={requestNewProject}
         onSaveProject={handlers.onSaveProject}
-        onClearLocalData={handlers.onClearLocalData}
+        onClearLocalData={() => setConfirm('clear')}
         onImportFiles={handlers.onImportFiles}
-        onWorkspaceChange={(next) => {
-          setWorkspace(next)
-          handlers.onWorkspaceChange(next)
-        }}
+        onWorkspaceChange={changeWorkspace}
         onToggleTheme={toggleTheme}
+        onOpenShortcuts={() => setShortcutsOpen(true)}
+        onOpenDiagnostics={() => setDiagnosticsOpen(true)}
         onTogglePanel={togglePanel}
       />
 
       <main className="min-h-0 flex-1 px-3 pb-1">
-        <ResizablePanelGroup orientation="vertical" id="workspace-rows">
+        <ResizablePanelGroup
+          orientation="vertical"
+          id="workspace-rows"
+          groupRef={rowsGroup}
+        >
           <ResizablePanel id="top-row" defaultSize="58" minSize="30">
             <ResizablePanelGroup
               orientation="horizontal"
               id="workspace-columns"
+              groupRef={columnsGroup}
             >
               <ResizablePanel
                 id="project"
@@ -201,7 +356,7 @@ export function AppShell({
               </ResizablePanel>
               <ResizableHandle
                 aria-label="Resize project panel"
-                className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+                className="w-3 rounded-full bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3"
               />
               <ResizablePanel id="monitor" defaultSize="52" minSize="25">
                 <MonitorPanel
@@ -220,7 +375,7 @@ export function AppShell({
               </ResizablePanel>
               <ResizableHandle
                 aria-label="Resize inspector"
-                className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+                className="w-3 rounded-full bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3"
               />
               <ResizablePanel
                 id="inspector"
@@ -239,7 +394,7 @@ export function AppShell({
           </ResizablePanel>
           <ResizableHandle
             aria-label="Resize timeline"
-            className="w-3 bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3 rounded-full"
+            className="w-3 rounded-full bg-transparent after:w-full hover:bg-accent-soft aria-[orientation=horizontal]:h-3"
           />
           <ResizablePanel
             id="timeline"
@@ -256,32 +411,42 @@ export function AppShell({
             >
               <TimelinePanel
                 doc={doc}
-                playheadTime={playback.currentTime}
+                media={media}
+                playheadTime={playback.time}
+                isPlaying={playback.isPlaying}
+                markIn={markIn}
+                markOut={markOut}
                 selectedIds={selectedIds}
                 tool={tool}
                 snapEnabled={snapEnabled}
                 pxPerSecond={pxPerSecond}
+                canUndo={canUndo}
+                canRedo={canRedo}
                 onSeek={handlers.onSeek}
                 onStepFrame={handlers.onStepFrame}
                 onJumpToStart={handlers.onJumpToStart}
                 onJumpToEnd={handlers.onJumpToEnd}
-                onSelectionChange={changeSelection}
+                onSelectionChange={handlers.onSelectionChange}
                 onSelectTool={changeTool}
                 onToggleSnap={changeSnap}
                 onZoomChange={changeZoom}
                 onSplit={handlers.onSplit}
                 onRippleDelete={() => handlers.onDelete({ ripple: true })}
+                onDelete={() => handlers.onDelete({ ripple: false })}
+                onUndo={handlers.onUndo}
+                onRedo={handlers.onRedo}
                 onToggleTrack={(trackId, toggle) =>
                   handlers.onToggleTrack({ trackId, toggle })
                 }
-                onClipPointerDown={handlers.onClipPointerDown}
-                onTrimHandlePointerDown={handlers.onTrimHandlePointerDown}
                 onKeyboardTrim={(itemId, edge, deltaFrames) =>
                   handlers.onTrimClip({ itemId, edge, deltaFrames })
                 }
                 onKeyboardMove={(itemId, deltaFrames) =>
                   handlers.onMoveClip({ itemId, deltaFrames })
                 }
+                onItemDrag={handlers.onItemDrag}
+                onItemTrim={handlers.onItemTrim}
+                onSplitAt={handlers.onSplitAt}
               />
             </div>
           </ResizablePanel>
@@ -289,25 +454,80 @@ export function AppShell({
       </main>
 
       <StatusBar
-        diagnostics={diagnostics}
+        capabilities={capabilities}
+        saveStatus={saveStatus}
         timelineZoomPercent={Math.round((pxPerSecond / DEFAULT_ZOOM) * 100)}
+        onOpenDiagnostics={() => setDiagnosticsOpen(true)}
       />
 
       <CommandPalette
         open={paletteOpen}
         onOpenChange={setPaletteOpen}
-        actions={actions}
+        commands={commands}
+        groupOrder={PALETTE_GROUPS}
       />
       <ExportDialog
         open={exportOpen}
         projectName={doc.name}
+        duration={doc.duration}
         status={exportStatus}
         estimate={exportEstimate}
+        capabilities={capabilities}
         onEstimateRequest={onEstimateRequest}
-        onOpenChange={setExportOpen}
+        onOpenChange={(open) => {
+          setExportOpen(open)
+          if (
+            !open &&
+            exportStatus.phase !== 'running' &&
+            exportStatus.phase !== 'idle'
+          ) {
+            handlers.onResetExport()
+          }
+        }}
         onExport={handlers.onExport}
         onCancelExport={handlers.onCancelExport}
+        onDownload={handlers.onDownloadExport}
+        onReset={handlers.onResetExport}
       />
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
+      <DiagnosticsDialog
+        open={diagnosticsOpen}
+        capabilities={capabilities}
+        onOpenChange={setDiagnosticsOpen}
+      />
+      <ConfirmDialog
+        open={confirm === 'new'}
+        title="Start a new project?"
+        description="This replaces the current project and removes its imported media from this browser. Your original files are not touched."
+        confirmLabel="Start new project"
+        destructive
+        onOpenChange={(open) => !open && setConfirm(null)}
+        onConfirm={handlers.onNewProject}
+      />
+      <ConfirmDialog
+        open={confirm === 'clear'}
+        title="Clear local data?"
+        description="This deletes the saved project and every cached media file stored in this browser. Your original files are not touched. This cannot be undone."
+        confirmLabel="Clear local data"
+        destructive
+        onOpenChange={(open) => !open && setConfirm(null)}
+        onConfirm={handlers.onClearLocalData}
+      />
+
+      {dragDepth > 0 ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-3 z-40 flex items-center justify-center rounded-2xl border-2 border-dashed border-foreground bg-background/80"
+        >
+          <div className="flex flex-col items-center gap-3">
+            <Icon icon="hugeicons:upload-01" className="size-8" />
+            <p className="text-lg font-semibold">Drop to import</p>
+            <p className="text-[0.9rem] text-muted-foreground">
+              Video, audio and images stay on your device.
+            </p>
+          </div>
+        </div>
+      ) : null}
       <div role="status" aria-live="polite" className="sr-only">
         {announcement}
       </div>

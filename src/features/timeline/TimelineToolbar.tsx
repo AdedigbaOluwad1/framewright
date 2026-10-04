@@ -11,9 +11,14 @@ interface TimelineToolbarProps {
   minZoom: number
   maxZoom: number
   hasSelection: boolean
+  canUndo: boolean
+  canRedo: boolean
   onSelectTool: (tool: TimelineTool) => void
   onSplit: () => void
   onRippleDelete: () => void
+  onDelete: () => void
+  onUndo: () => void
+  onRedo: () => void
   onToggleSnap: (enabled: boolean) => void
   onZoomChange: (pxPerSecond: number) => void
 }
@@ -25,9 +30,14 @@ export function TimelineToolbar({
   minZoom,
   maxZoom,
   hasSelection,
+  canUndo,
+  canRedo,
   onSelectTool,
   onSplit,
   onRippleDelete,
+  onDelete,
+  onUndo,
+  onRedo,
   onToggleSnap,
   onZoomChange,
 }: TimelineToolbarProps) {
@@ -59,11 +69,33 @@ export function TimelineToolbar({
         icon={<Icon icon="hugeicons:scissor" className="size-4" />}
       />
       <IconButton
+        label="Delete"
+        shortcut="Delete"
+        disabled={!hasSelection}
+        onClick={onDelete}
+        icon={<Icon icon="hugeicons:delete-02" className="size-4" />}
+      />
+      <IconButton
         label="Ripple delete"
         shortcut="Shift+Delete"
         disabled={!hasSelection}
         onClick={onRippleDelete}
-        icon={<Icon icon="hugeicons:delete-02" className="size-4" />}
+        icon={<Icon icon="hugeicons:delete-put-back" className="size-4" />}
+      />
+      <Separator orientation="vertical" className="mx-2 h-6" />
+      <IconButton
+        label="Undo"
+        shortcut="Mod+Z"
+        disabled={!canUndo}
+        onClick={onUndo}
+        icon={<Icon icon="hugeicons:undo-02" className="size-4" />}
+      />
+      <IconButton
+        label="Redo"
+        shortcut="Mod+Shift+Z"
+        disabled={!canRedo}
+        onClick={onRedo}
+        icon={<Icon icon="hugeicons:redo-02" className="size-4" />}
       />
       <Separator orientation="vertical" className="mx-2 h-6" />
       <IconButton

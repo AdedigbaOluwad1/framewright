@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Icon } from '@iconify/react'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Input } from '@/shared/ui/input'
@@ -12,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui/select'
+import { FONT_FAMILIES } from '@/compositor/draw'
 import type { ItemPatch } from '@/features/app-shell/handlers'
 import type { FitMode, TimelineItem } from '@/features/timeline/types'
 import { NumberField, Section, SliderField } from './Field'
@@ -21,12 +23,9 @@ export interface InspectorPanelProps {
   onUpdateItem: (itemId: string, patch: ItemPatch) => void
 }
 
-const FONTS = ['Geist', 'Geist Mono', 'Georgia', 'Impact']
+const FONTS = FONT_FAMILIES
 
-export function InspectorPanel({
-  selection,
-  onUpdateItem,
-}: InspectorPanelProps) {
+function InspectorPanelView({ selection, onUpdateItem }: InspectorPanelProps) {
   const item = selection.length === 1 ? selection[0] : undefined
 
   return (
@@ -76,13 +75,15 @@ function ItemEditor({
         <Section title="Transform">
           <NumberField
             label="Position X"
-            value={item.transform.x}
-            onCommit={(x) => update({ transform: { x } })}
+            value={Math.round(item.transform.x * 100)}
+            suffix="%"
+            onCommit={(x) => update({ transform: { x: x / 100 } })}
           />
           <NumberField
             label="Position Y"
-            value={item.transform.y}
-            onCommit={(y) => update({ transform: { y } })}
+            value={Math.round(item.transform.y * 100)}
+            suffix="%"
+            onCommit={(y) => update({ transform: { y: y / 100 } })}
           />
           <SliderField
             label="Scale"
@@ -189,15 +190,19 @@ function ItemEditor({
           </div>
           <NumberField
             label="Position X"
-            value={item.position.x}
-            step={0.05}
-            onCommit={(x) => update({ position: { x, y: item.position.y } })}
+            value={Math.round(item.position.x * 100)}
+            suffix="%"
+            onCommit={(x) =>
+              update({ position: { x: x / 100, y: item.position.y } })
+            }
           />
           <NumberField
             label="Position Y"
-            value={item.position.y}
-            step={0.05}
-            onCommit={(y) => update({ position: { x: item.position.x, y } })}
+            value={Math.round(item.position.y * 100)}
+            suffix="%"
+            onCommit={(y) =>
+              update({ position: { x: item.position.x, y: y / 100 } })
+            }
           />
         </Section>
       ) : null}
@@ -205,14 +210,14 @@ function ItemEditor({
       <Section title="Timing">
         <NumberField
           label="Start"
-          value={item.start}
+          value={Math.round(item.start * 100) / 100}
           step={0.1}
           suffix="s"
           onCommit={(start) => update({ start })}
         />
         <NumberField
           label="Duration"
-          value={item.duration}
+          value={Math.round(item.duration * 100) / 100}
           step={0.1}
           suffix="s"
           onCommit={(duration) => update({ duration })}
@@ -261,3 +266,5 @@ function ItemEditor({
     </div>
   )
 }
+
+export const InspectorPanel = memo(InspectorPanelView)

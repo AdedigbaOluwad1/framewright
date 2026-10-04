@@ -1,90 +1,76 @@
-# Wiring guide
+# How the editor is wired
 
-The UI is presentational. Every real behaviour is a typed seam you connect yourself. Seams are not marked with `// WIRE:` comments because this repo forbids inline comments. Instead, every seam is one member of `EditorHandlers` in `src/features/app-shell/handlers.ts`, and each is listed below.
+Everything in the UI is now connected to real behaviour. This file maps each user action to the code that runs it, so you can read the flow end to end.
 
-## How it is connected today
+## Layers
 
-- `src/App.tsx` renders `AppShell` with mock data from `src/mocks` and `createUnwiredHandlers()`.
-- `createUnwiredHandlers()` returns a Proxy that shows a toast and `console.debug` for every call, so you can see which seam fired and with what payload.
-- To wire a seam, replace its entry in the `handlers` object in `App.tsx`. Search for `handlers=` there.
-- Export is already driven by `useMockExport` in `src/mocks/export.ts`. Replace it with your real progress state.
+| Layer          | Where                                                          | What it owns                                                                                                 |
+| -------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| UI shell       | `src/features/app-shell` and sibling feature folders           | Layout, dialogs, UI-only state (tool, snap, zoom, workspace, theme, open dialogs). Pure props and callbacks. |
+| Controller     | `src/features/editor/useEditorController.ts`                   | Builds the `EditorHandlers` object. The only place the UI meets the engines.                                 |
+| Editor store   | `src/features/editor/store.ts`                                 | The timeline document, media list, selection, marks and undo history (Immer patches).                        |
+| Timeline logic | `src/features/timeline/ops.ts`                                 | Pure functions: split, trim, move, ripple delete, overlap resolution, item updates. Unit tested.             |
+| Gestures       | `src/features/timeline/useTimelineGestures.ts`                 | Pointer drag, trim and snapping geometry. Reports absolute times to handlers.                                |
+| Compositor     | `src/compositor/draw.ts`                                       | Draws one frame from layers. Shared by preview and export, so they cannot drift.                             |
+| Preview engine | `src/engine/preview.ts`                                        | Playback clock, scrubbing, A/V sync, loop, shuttle. Drives the monitor canvas.                               |
+| Media          | `src/engine/mediaLibrary.ts`, `importer.ts`                    | Probing, thumbnails, waveform peaks, size caps and error hints.                                              |
+| Export         | `src/engine/exporter.ts`, `src/features/export/exportStore.ts` | WebCodecs encode via mediabunny, audio mixdown, progress, cancel.                                            |
+| Persistence    | `src/storage/projectStorage.ts`                                | IndexedDB project JSON, OPFS media files, autosave, clear.                                                   |
+| Capabilities   | `src/engine/capabilities.ts`                                   | Detects encoders and storage at startup for the status bar and diagnostics.                                  |
 
-## Inputs you provide (props of `AppShell`)
+## Action to code
 
-| Prop             | Type                                          | Purpose                                                                                                                   |
-| ---------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `doc`            | `TimelineDocument`                            | Single source of truth. Items need `start` and `duration` (timeline time) plus `sourceIn`, `sourceOut`, `speed` for clips |
-| `media`          | `MediaAsset[]`                                | Project panel library                                                                                                     |
-| `playback`       | `{ isPlaying, currentTime, loop }`            | Drives the playhead, timecode and transport                                                                               |
-| `canvasRef`      | `RefObject<HTMLCanvasElement>`                | Canvas the compositor draws into. Intrinsic size is `doc.width` x `doc.height`                                            |
-| `diagnostics`    | `{ engine, crossOriginIsolated, memoryHint }` | Status bar badges                                                                                                         |
-| `exportStatus`   | `ExportStatus`                                | Export dialog state: idle, running, done, cancelled, error                                                                |
-| `exportEstimate` | `{ sizeBytes, seconds } \| null`              | Estimated size and time. Recomputed via `onEstimateRequest(settings)`                                                     |
+| Action                                       | Handler                                                                          | Runs                                                                                                                                   |
+| -------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Import (browse, drop anywhere, File menu)    | `onImportFiles`                                                                  | `importFiles` probes with mediabunny, caps size at 2 GB, registers the file, makes a thumbnail and waveform, stores the file in OPFS   |
+| Add clip, text, music                        | `onAddMediaToTimeline`, `onAddTextItem`                                          | `addMediaToTimeline` appends video and images to the end of V1 and places audio at the playhead. `addText` places text at the playhead |
+| Play, pause, shuttle, step, seek, jump, loop | `onPlayPause`, `onShuttle`, `onStepFrame`, `onSeek`, `onJumpTo*`, `onToggleLoop` | `previewEngine` methods                                                                                                                |
+| Mark in and out                              | `onMarkIn`, `onMarkOut`                                                          | `setMarks`. With loop on, playback stays inside the marks                                                                              |
+| Select                                       | `onSelectionChange`                                                              | `setSelection`                                                                                                                         |
+| Split, razor click                           | `onSplit`, `onSplitAt`                                                           | `splitAtPlayhead` (selected clips under the playhead, otherwise all) and `splitItemAt`                                                 |
+| Delete, ripple delete                        | `onDelete`                                                                       | `deleteSelected`. Ripple closes the gap on each track                                                                                  |
+| Drag to move or reorder                      | `onItemDrag`                                                                     | gesture on the store: `beginGesture`, `moveTo` while dragging, one `endGesture` for a single undo step                                 |
+| Drag a trim handle                           | `onItemTrim`                                                                     | same gesture flow with `trimTo`, bounded by source length and neighbours                                                               |
+| Keyboard trim and move                       | `onTrimClip`, `onMoveClip`                                                       | `trimByFrames`, `moveByFrames`                                                                                                         |
+| Track mute, lock, solo                       | `onToggleTrack`                                                                  | `toggleTrackFlag`. Locked tracks reject edits. Mute and solo affect preview and export audio                                           |
+| Inspector fields                             | `onUpdateItem`                                                                   | `updateItem` in `ops.ts`. Rapid slider changes merge into one undo step                                                                |
+| Undo, redo                                   | `onUndo`, `onRedo`                                                               | Applies stored Immer patches                                                                                                           |
+| Export                                       | `onExport`, `onCancelExport`, `onDownloadExport`, `onResetExport`                | `useExportStore` calls `exportProject` and downloads the file                                                                          |
+| New project, clear local data                | `onNewProject`, `onClearLocalData`                                               | Asks for confirmation in the shell, then replaces the project and clears storage                                                       |
+| Save                                         | `onSaveProject`                                                                  | `saveProjectNow`. Autosave also runs 0.8 s after any change                                                                            |
+| Workspace                                    | `onWorkspaceChange`                                                              | The shell resizes the panel groups (Editing, Audio, Titles)                                                                            |
 
-UI-only state kept inside `AppShell`: selection, active tool, snap flag, timeline zoom, workspace, theme, dialog and palette open state, panel layout.
+## Timeline model rules
 
-## Callbacks (`EditorHandlers`)
+- `start` and `duration` are in timeline seconds, snapped to whole frames. `sourceIn`, `sourceOut` and `speed` describe the source range. `duration` is kept equal to `(sourceOut - sourceIn) / speed` for clips.
+- Items on a track never overlap. Moving one over a neighbour reorders them by pushing the neighbour along (`settle` in `ops.ts`).
+- Transform `x` and `y` are fractions of the canvas, so `0.1` is 10%. Text `position` is the centre as a fraction. Fit is contain, Fill is cover, Crop is cover with a pan that cannot reveal black edges.
 
-| Callback                                              | Payload                                              | Fired by                                                              |
-| ----------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------- |
-| `onNewProject` / `onSaveProject` / `onClearLocalData` | none                                                 | File menu                                                             |
-| `onRenameProject`                                     | `name: string`                                       | Project name field                                                    |
-| `onWorkspaceChange`                                   | `workspace: string`                                  | Workspace switcher                                                    |
-| `onImportFiles`                                       | `files: File[]`                                      | Dropzone, File > Import                                               |
-| `onAddMediaToTimeline`                                | `mediaId`                                            | Media card (double-click, Enter, context menu), audio list            |
-| `onAddTextItem`                                       | none                                                 | Text tab                                                              |
-| `onPlayPause`                                         | none                                                 | Transport, Space                                                      |
-| `onShuttle`                                           | `'reverse' \| 'stop' \| 'forward'`                   | J / K / L                                                             |
-| `onStepFrame`                                         | `-1 \| 1`                                            | Transport, arrow keys, playhead                                       |
-| `onSeek`                                              | `time: Seconds`                                      | Click on the ruler (x / pxPerSecond)                                  |
-| `onJumpToStart` / `onJumpToEnd`                       | none                                                 | Transport, Home / End                                                 |
-| `onToggleLoop`                                        | `loop: boolean`                                      | Transport, Mod+L                                                      |
-| `onMarkIn` / `onMarkOut`                              | none                                                 | I / O                                                                 |
-| `onSelectionChange`                                   | `itemIds: string[]`                                  | Clip click or Enter, empty lane click                                 |
-| `onSplit`                                             | none                                                 | Toolbar, S                                                            |
-| `onDelete`                                            | `{ ripple: boolean }`                                | Delete, Shift+Delete, toolbar                                         |
-| `onUndo` / `onRedo`                                   | none                                                 | Edit menu, Mod+Z, Mod+Shift+Z                                         |
-| `onSelectTool`                                        | `'select' \| 'razor'`                                | Toolbar, V / C                                                        |
-| `onToggleSnap`                                        | `enabled: boolean`                                   | Toolbar, N                                                            |
-| `onTimelineZoomChange`                                | `pxPerSecond: number`                                | Slider, buttons, + / -                                                |
-| `onTrimClip`                                          | `{ itemId, edge: 'in' \| 'out', deltaFrames }`       | Keyboard only: Shift+Alt+Arrow trims out, Ctrl/Cmd+Alt+Arrow trims in |
-| `onMoveClip`                                          | `{ itemId, deltaFrames }`                            | Keyboard only: Alt+Arrow on a focused clip                            |
-| `onClipPointerDown`                                   | `itemId, PointerEvent`                               | Pointer down on a clip. Implement drag and razor click here           |
-| `onTrimHandlePointerDown`                             | `itemId, edge, PointerEvent`                         | Pointer down on a trim handle. Implement trim drag here               |
-| `onToggleTrack`                                       | `{ trackId, toggle: 'muted' \| 'locked' \| 'solo' }` | Track headers                                                         |
-| `onUpdateItem`                                        | `itemId, ItemPatch`                                  | Every inspector field                                                 |
-| `onExport`                                            | `ExportSettings`                                     | Export dialog                                                         |
-| `onCancelExport`                                      | none                                                 | Export dialog                                                         |
+## Shortcuts
 
-Pointer drag and scrub are not implemented. The UI only reports the initial `pointerdown`. Attach your own `pointermove` and `pointerup` listeners, and use `setPointerCapture`.
+Single typed registry in `src/shared/shortcuts/registry.ts`. `useShortcuts` matches key events and fires the actions built in `AppShell`. The command palette and the Keyboard shortcuts dialog both read the same registry.
 
-## Shortcut registry
+| Action                            | Keys                                       |
+| --------------------------------- | ------------------------------------------ |
+| Play and pause                    | Space                                      |
+| Shuttle reverse, stop, forward    | J, K, L (repeat to double speed, up to 4x) |
+| Step frame                        | Left, Right                                |
+| Jump to start and end             | Home, End                                  |
+| Loop                              | Mod+L                                      |
+| Mark in, out                      | I, O                                       |
+| Split                             | S                                          |
+| Delete, ripple delete             | Delete, Shift+Delete                       |
+| Undo, redo                        | Mod+Z, Mod+Shift+Z                         |
+| Select tool, razor tool, snapping | V, C, N                                    |
+| Zoom timeline                     | +, -                                       |
+| Command palette, export           | Mod+K, Mod+E                               |
 
-Single source: `src/shared/shortcuts/registry.ts`. `useShortcuts` matches key events and fires the `ActionHandlers` map built in `AppShell`. The command palette lists the same registry.
+On a focused clip: Alt+Left and Alt+Right move it one frame, Alt+Shift+Left and Right trim the end, Ctrl or Cmd+Alt+Left and Right trim the start. A mouse click on a button releases its focus, so Space plays rather than re-pressing the button.
 
-| Action                          | Keys                  | Calls                           |
-| ------------------------------- | --------------------- | ------------------------------- |
-| playPause                       | Space                 | `onPlayPause`                   |
-| shuttleReverse / Stop / Forward | J / K / L             | `onShuttle`                     |
-| stepBack / stepForward          | Left / Right          | `onStepFrame`                   |
-| jumpToStart / jumpToEnd         | Home / End            | `onJumpToStart` / `onJumpToEnd` |
-| toggleLoop                      | Mod+L                 | `onToggleLoop`                  |
-| markIn / markOut                | I / O                 | `onMarkIn` / `onMarkOut`        |
-| split                           | S                     | `onSplit`                       |
-| delete / rippleDelete           | Delete / Shift+Delete | `onDelete`                      |
-| undo / redo                     | Mod+Z / Mod+Shift+Z   | `onUndo` / `onRedo`             |
-| toolSelect / toolRazor          | V / C                 | `onSelectTool`                  |
-| toggleSnap                      | N                     | `onToggleSnap`                  |
-| zoomIn / zoomOut                | + / -                 | `onTimelineZoomChange`          |
-| commandPalette                  | Mod+K                 | opens palette                   |
-| export                          | Mod+E                 | opens export dialog             |
+## Known limits
 
-Shortcuts are ignored in text fields (except Mod+K and Mod+E), and navigation keys are ignored when a button, slider, tab, menu or clip option has focus so widgets keep their native keyboard behaviour.
-
-## Startup loader
-
-`AppLoader` covers the app until `useBoot()` reports ready. Boot is ready when fonts have loaded, a minimum display time has passed, and the optional `ready` flag is true. Pass your real initialisation state as `useBoot({ ready })`, for example capability detection or the cached ffmpeg.wasm core, and lower or remove `minDurationMs` (default 1800) once real work takes that long, since the brand promises speed. The rotating messages live in `MESSAGES` in `AppLoader.tsx`, and the last one stays until boot finishes. While the loader is up, the app underneath is `inert`.
-
-## Design tokens
-
-All colours, radii and track sizes are CSS variables in `src/index.css`: surfaces `--surface-0..3`, `--accent-solid`, state colours, `--playhead`, and clip colours `--clip-video`, `--clip-caption`, `--clip-audio`, `--clip-music` (each with an `-fg` pair). The token for text clips is named `caption` because Tailwind already owns the `bg-clip-text` utility.
+- Containers mediabunny cannot read (AVI, FLV) are rejected with a hint. The ffmpeg.wasm remux fallback from the spec is not built.
+- If WebCodecs cannot encode, the status bar says so and export is blocked. There is no ffmpeg.wasm encode fallback.
+- Export runs on the main thread (it yields every frame). Moving it to a worker is the next step.
+- Preview decodes through hidden media elements, so it is not frame-exact while playing. Export uses exact decoded frames.
+- Estimated export size is an upper bound from the bitrate.
