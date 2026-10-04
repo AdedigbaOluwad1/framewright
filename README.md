@@ -68,6 +68,17 @@ The dev and preview servers send COOP/COEP headers so `crossOriginIsolated` is t
 
 See [WIRE.md](WIRE.md) for how every action is wired and the known limits.
 
+## Deploying to Cloudflare Workers
+
+The app is a static single-page build, so it deploys as an assets-only Worker. `wrangler.jsonc` points at `dist`, falls back to `index.html` for unknown routes, and `public/_headers` sends the cross-origin isolation headers (COOP and COEP) that the editor expects.
+
+```sh
+npx wrangler login
+npm run deploy
+```
+
+`npm run preview:worker` builds and serves the Worker locally with Wrangler. To use a custom domain, add a `routes` entry with `custom_domain` set to `true` in `wrangler.jsonc`.
+
 ## Roadmap
 
 - [x] Core editing: timeline, trim, split, reorder, preview with audio sync, undo and redo

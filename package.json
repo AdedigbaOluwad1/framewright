@@ -13,7 +13,9 @@
     "test": "vitest run --passWithNoTests",
     "icons": "node scripts/build-icons.mjs",
     "predev": "npm run icons",
-    "prebuild": "npm run icons"
+    "prebuild": "npm run icons",
+    "deploy": "npm run build && npx wrangler deploy",
+    "preview:worker": "npm run build && npx wrangler dev"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
