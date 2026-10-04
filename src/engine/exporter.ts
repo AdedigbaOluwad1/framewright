@@ -23,7 +23,7 @@ import {
   type FrameLayer,
 } from '@/compositor/draw'
 import type { ExportSettings } from '@/features/export/types'
-import { itemEnd, itemsAt } from '@/features/timeline/ops'
+import { itemEnd, itemsAt, sortForCompositing } from '@/features/timeline/ops'
 import type {
   MediaAsset,
   TimelineDocument,
@@ -300,7 +300,6 @@ export async function exportProject(
       sources.set(item.id, await openVideoSource(item, asset, settings.fps))
     }
 
-    const order = new Map(doc.tracks.map((track, index) => [track.id, index]))
     const totalFrames = Math.ceil(doc.duration * settings.fps - 1e-9)
     const frameStart = performance.now()
     const size = {
@@ -312,9 +311,7 @@ export async function exportProject(
     for (let frame = 0; frame < totalFrames; frame++) {
       throwIfAborted(signal)
       const time = frame / settings.fps
-      const active = itemsAt(outputDoc, time).sort(
-        (a, b) => (order.get(b.trackId) ?? 0) - (order.get(a.trackId) ?? 0),
-      )
+      const active = sortForCompositing(outputDoc, itemsAt(outputDoc, time))
       const layers: FrameLayer[] = []
       for (const item of active) {
         const track = doc.tracks.find(

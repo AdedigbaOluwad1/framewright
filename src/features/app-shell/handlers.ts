@@ -1,7 +1,7 @@
 import type { ExportSettings } from '@/features/export/types'
 import type { GesturePhase } from '@/features/timeline/useTimelineGestures'
 import type { Seconds, TrackToggle, TrimEdge } from '@/features/timeline/types'
-import type { ItemPatchInput } from '@/features/timeline/ops'
+import type { ArrangeAction, ItemPatchInput } from '@/features/timeline/ops'
 import type { TextPreset } from '@/features/editor/store'
 import type { Workspace } from './types'
 
@@ -24,6 +24,7 @@ export interface TrackTogglePayload {
 }
 
 export type ItemPatch = ItemPatchInput
+export type { ArrangeAction }
 
 export interface EditorHandlers {
   onNewProject: () => void
@@ -50,6 +51,7 @@ export interface EditorHandlers {
   onSplit: () => void
   onSplitAt: (payload: { itemId: string; time: Seconds }) => void
   onDelete: (options: { ripple: boolean }) => void
+  onArrange: (action: ArrangeAction) => void
   onUndo: () => void
   onRedo: () => void
   onTrimClip: (payload: TrimPayload) => void

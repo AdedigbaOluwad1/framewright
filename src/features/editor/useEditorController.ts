@@ -142,6 +142,7 @@ export function useEditorController() {
         store().splitItemAt(itemId, time)
       },
       onDelete: ({ ripple }) => store().deleteSelected(ripple),
+      onArrange: (action) => store().arrangeSelected(action),
       onUndo: () => store().undo(),
       onRedo: () => store().redo(),
       onTrimClip: ({ itemId, edge, deltaFrames }) =>

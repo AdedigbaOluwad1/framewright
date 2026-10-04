@@ -60,6 +60,7 @@ The dev and preview servers send COOP/COEP headers so `crossOriginIsolated` is t
 
 - Import video, audio and images by browsing, dropping anywhere, or the File menu. Files stay on your device.
 - Single-timeline editing: trim, split, razor, drag to reorder, ripple delete, snapping, keyboard nudging, undo and redo.
+- Layer ordering with bring to front, forward, backward and send to back.
 - Text overlays, music and voice-over, per-clip volume and speed, fit, fill and crop framing.
 - Preview with synced audio, scrubbing, loop with in and out marks, J K L shuttle.
 - Export to MP4 (H.264 and AAC) or WebM (VP9 and Opus) with Shorts, Reels and TikTok presets, progress and cancel.

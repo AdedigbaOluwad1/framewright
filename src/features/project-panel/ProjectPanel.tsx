@@ -58,17 +58,22 @@ function ProjectPanelView({
       className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-surface-1 shadow-sm"
     >
       <Tabs defaultValue="media" className="flex h-full min-h-0 flex-col gap-0">
-        <TabsList className="h-11 w-full shrink-0 justify-start rounded-none border-b border-border bg-transparent px-1">
-          <TabsTrigger value="media" className="text-[0.9rem]">
-            Media
-          </TabsTrigger>
-          <TabsTrigger value="text" className="text-[0.9rem]">
-            Text
-          </TabsTrigger>
-          <TabsTrigger value="audio" className="text-[0.9rem]">
-            Audio
-          </TabsTrigger>
-        </TabsList>
+        <div className="shrink-0 border-b border-border p-3">
+          <TabsList className="w-full">
+            <TabsTrigger value="media">
+              <Icon icon="hugeicons:film-01" aria-hidden="true" />
+              Media
+            </TabsTrigger>
+            <TabsTrigger value="text">
+              <Icon icon="hugeicons:text-font" aria-hidden="true" />
+              Text
+            </TabsTrigger>
+            <TabsTrigger value="audio">
+              <Icon icon="hugeicons:music-note-01" aria-hidden="true" />
+              Audio
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="media" className="min-h-0 flex-1">
           {visual.length === 0 ? (

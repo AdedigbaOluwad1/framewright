@@ -2,6 +2,9 @@ import { produce } from 'immer'
 import { describe, expect, it } from 'vitest'
 import {
   addItem,
+  arrangeItems,
+  itemZ,
+  sortForCompositing,
   createEmptyDocument,
   deleteItems,
   moveItem,
@@ -173,5 +176,70 @@ describe('updateItem', () => {
     const item = doc.items[0] as VideoClip
     expect(item.volume).toBe(2)
     expect(item.speed).toBe(2)
+  })
+})
+
+describe('arrange', () => {
+  function layered(): TimelineDocument {
+    const base = createEmptyDocument()
+    return produce(base, (draft) => {
+      addItem(draft, clip('v', 0, 10))
+      addItem(draft, {
+        id: 't1',
+        kind: 'text',
+        trackId: 't-t1',
+        start: 0,
+        duration: 5,
+        text: 'one',
+        fontFamily: 'Geist',
+        fontSize: 60,
+        color: '#fff',
+        position: { x: 0.5, y: 0.5 },
+      })
+      addItem(draft, {
+        id: 't2',
+        kind: 'text',
+        trackId: 't-t1',
+        start: 5,
+        duration: 5,
+        text: 'two',
+        fontFamily: 'Geist',
+        fontSize: 60,
+        color: '#fff',
+        position: { x: 0.5, y: 0.5 },
+      })
+    })
+  }
+
+  it('draws text above video by default', () => {
+    const doc = layered()
+    expect(sortForCompositing(doc, doc.items).map((i) => i.id)).toEqual([
+      'v',
+      't1',
+      't2',
+    ])
+  })
+
+  it('sends text behind the video and brings it back to the front', () => {
+    const doc = layered()
+    const back = produce(doc, (d) => arrangeItems(d, ['t1'], 'back'))
+    expect(sortForCompositing(back, back.items).map((i) => i.id)[0]).toBe('t1')
+    const front = produce(back, (d) => arrangeItems(d, ['t1'], 'front'))
+    const order = sortForCompositing(front, front.items).map((i) => i.id)
+    expect(order[order.length - 1]).toBe('t1')
+  })
+
+  it('moves one step among items that overlap in time', () => {
+    const doc = layered()
+    const down = produce(doc, (d) => arrangeItems(d, ['t1'], 'backward'))
+    const order = sortForCompositing(down, down.items).map((i) => i.id)
+    expect(order.indexOf('t1')).toBeLessThan(order.indexOf('v'))
+    expect(itemZ(down.items.find((i) => i.id === 't2')!)).toBe(1)
+  })
+
+  it('does nothing for audio items', () => {
+    const doc = layered()
+    const same = produce(doc, (d) => arrangeItems(d, ['missing'], 'front'))
+    expect(same).toBe(doc)
   })
 })

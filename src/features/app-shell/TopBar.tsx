@@ -106,6 +106,11 @@ export function TopBar({
             {actionItem('split')}
             {actionItem('delete')}
             {actionItem('rippleDelete')}
+            <MenubarSeparator />
+            {actionItem('bringToFront')}
+            {actionItem('bringForward')}
+            {actionItem('sendBackward')}
+            {actionItem('sendToBack')}
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
@@ -176,7 +181,7 @@ export function TopBar({
         <SelectTrigger
           aria-label="Workspace"
           size="sm"
-          className="h-9 w-28 text-[0.9rem]"
+          className="w-28 text-[0.9rem]"
         >
           <SelectValue />
         </SelectTrigger>
@@ -193,6 +198,7 @@ export function TopBar({
         label={
           theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
         }
+        className="size-8"
         onClick={onToggleTheme}
         icon={
           theme === 'dark' ? (
@@ -205,7 +211,7 @@ export function TopBar({
 
       <Button
         size="sm"
-        className="h-9 gap-1 text-[0.9rem]"
+        className="h-8 gap-2 px-5 text-[0.9rem]"
         onClick={actions.export}
       >
         <Icon icon="hugeicons:download-01" aria-hidden="true" /> Export

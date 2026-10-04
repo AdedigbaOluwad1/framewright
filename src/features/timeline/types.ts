@@ -39,6 +39,7 @@ export interface VideoClip extends ItemBase {
   volume: number
   muted: boolean
   transform: Transform
+  z?: number
 }
 
 export interface AudioClip extends ItemBase {
@@ -59,6 +60,7 @@ export interface TextItem extends ItemBase {
   fontSize: number
   color: string
   position: { x: number; y: number }
+  z?: number
 }
 
 export type TimelineItem = VideoClip | AudioClip | TextItem

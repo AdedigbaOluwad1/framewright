@@ -1,7 +1,12 @@
 import { create } from 'zustand'
 import { drawFrame, type FrameLayer } from '@/compositor/draw'
 import { useEditorStore } from '@/features/editor/store'
-import { itemEnd, itemsAt, toFrame } from '@/features/timeline/ops'
+import {
+  itemEnd,
+  itemsAt,
+  sortForCompositing,
+  toFrame,
+} from '@/features/timeline/ops'
 import type {
   MediaAsset,
   Seconds,
@@ -291,10 +296,7 @@ class PreviewEngine {
 
   private layers(time: Seconds): FrameLayer[] {
     const doc = this.doc()
-    const order = new Map(doc.tracks.map((track, index) => [track.id, index]))
-    const active = itemsAt(doc, time).sort(
-      (a, b) => (order.get(b.trackId) ?? 0) - (order.get(a.trackId) ?? 0),
-    )
+    const active = sortForCompositing(doc, itemsAt(doc, time))
     const layers: FrameLayer[] = []
     for (const item of active) {
       const track = doc.tracks.find(

@@ -8,6 +8,9 @@ import {
 import { create } from 'zustand'
 import {
   addItem,
+  arrangeItems,
+  isVisual,
+  type ArrangeAction,
   createEmptyDocument,
   deleteItems,
   isItemLocked,
@@ -94,6 +97,7 @@ export interface EditorState {
     options: { track?: 'audio' | 'music'; atTime: Seconds },
   ) => string | null
   addText: (preset: TextPreset, atTime: Seconds) => string
+  arrangeSelected: (action: ArrangeAction) => void
   toggleTrackFlag: (trackId: string, toggle: TrackToggle) => void
   updateSelectedItem: (itemId: string, patch: ItemPatchInput) => void
   rename: (name: string) => void
@@ -414,6 +418,19 @@ export const useEditorStore = create<EditorState>()((set, get) => {
       )
       set({ selectedIds: [id] })
       return id
+    },
+    arrangeSelected: (action) => {
+      const { doc, selectedIds } = get()
+      const ids = doc.items
+        .filter(
+          (item) =>
+            selectedIds.includes(item.id) &&
+            isVisual(item) &&
+            !isItemLocked(doc, item.id),
+        )
+        .map((item) => item.id)
+      if (ids.length === 0) return
+      commit((draft) => arrangeItems(draft, ids, action))
     },
     toggleTrackFlag: (trackId, toggle) =>
       commit((draft) => toggleTrack(draft, trackId, toggle)),

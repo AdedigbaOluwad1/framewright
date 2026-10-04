@@ -43,6 +43,7 @@ Everything in the UI is now connected to real behaviour. This file maps each use
 ## Timeline model rules
 
 - `start` and `duration` are in timeline seconds, snapped to whole frames. `sourceIn`, `sourceOut` and `speed` describe the source range. `duration` is kept equal to `(sourceOut - sourceIn) / speed` for clips.
+- Layer order is decided by each visual item's `z` (video defaults to 0, text to 1, so text sits above video). Track order only breaks ties.
 - Items on a track never overlap. Moving one over a neighbour reorders them by pushing the neighbour along (`settle` in `ops.ts`).
 - Transform `x` and `y` are fractions of the canvas, so `0.1` is 10%. Text `position` is the centre as a fraction. Fit is contain, Fill is cover, Crop is cover with a pan that cannot reveal black edges.
 

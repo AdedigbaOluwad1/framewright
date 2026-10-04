@@ -193,6 +193,10 @@ export function AppShell({
     split: handlers.onSplit,
     delete: () => handlers.onDelete({ ripple: false }),
     rippleDelete: () => handlers.onDelete({ ripple: true }),
+    bringToFront: () => handlers.onArrange('front'),
+    bringForward: () => handlers.onArrange('forward'),
+    sendBackward: () => handlers.onArrange('backward'),
+    sendToBack: () => handlers.onArrange('back'),
     undo: handlers.onUndo,
     redo: handlers.onRedo,
     commandPalette: () => setPaletteOpen((open) => !open),
@@ -399,6 +403,7 @@ export function AppShell({
                 <InspectorPanel
                   selection={selectedItems}
                   onUpdateItem={handlers.onUpdateItem}
+                  onArrange={handlers.onArrange}
                 />
               </ResizablePanel>
             </ResizablePanelGroup>

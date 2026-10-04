@@ -1,5 +1,7 @@
 import { memo } from 'react'
+import { Icon } from '@iconify/react'
 import { EmptyState } from '@/shared/ui/empty-state'
+import { IconButton } from '@/shared/ui/icon-button'
 import { ScrollArea } from '@/shared/ui/scroll-area'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
@@ -14,18 +16,55 @@ import {
   SelectValue,
 } from '@/shared/ui/select'
 import { FONT_FAMILIES } from '@/compositor/draw'
-import type { ItemPatch } from '@/features/app-shell/handlers'
+import type { ArrangeAction, ItemPatch } from '@/features/app-shell/handlers'
 import type { FitMode, TimelineItem } from '@/features/timeline/types'
 import { NumberField, Section, SliderField } from './Field'
 
 export interface InspectorPanelProps {
   selection: TimelineItem[]
   onUpdateItem: (itemId: string, patch: ItemPatch) => void
+  onArrange: (action: ArrangeAction) => void
 }
 
 const FONTS = FONT_FAMILIES
 
-function InspectorPanelView({ selection, onUpdateItem }: InspectorPanelProps) {
+const ARRANGE_ACTIONS: {
+  action: ArrangeAction
+  label: string
+  shortcut: string
+  icon: string
+}[] = [
+  {
+    action: 'back',
+    label: 'Send to back',
+    shortcut: 'Mod+Shift+[',
+    icon: 'hugeicons:send-to-back',
+  },
+  {
+    action: 'backward',
+    label: 'Send backward',
+    shortcut: 'Mod+[',
+    icon: 'hugeicons:arrow-down-02',
+  },
+  {
+    action: 'forward',
+    label: 'Bring forward',
+    shortcut: 'Mod+]',
+    icon: 'hugeicons:arrow-up-02',
+  },
+  {
+    action: 'front',
+    label: 'Bring to front',
+    shortcut: 'Mod+Shift+]',
+    icon: 'hugeicons:bring-to-front',
+  },
+]
+
+function InspectorPanelView({
+  selection,
+  onUpdateItem,
+  onArrange,
+}: InspectorPanelProps) {
   const item = selection.length === 1 ? selection[0] : undefined
 
   return (
@@ -50,7 +89,11 @@ function InspectorPanelView({ selection, onUpdateItem }: InspectorPanelProps) {
         />
       ) : (
         <ScrollArea className="min-h-0 flex-1">
-          <ItemEditor item={item} onUpdateItem={onUpdateItem} />
+          <ItemEditor
+            item={item}
+            onUpdateItem={onUpdateItem}
+            onArrange={onArrange}
+          />
         </ScrollArea>
       )}
     </aside>
@@ -60,14 +103,37 @@ function InspectorPanelView({ selection, onUpdateItem }: InspectorPanelProps) {
 function ItemEditor({
   item,
   onUpdateItem,
+  onArrange,
 }: {
   item: TimelineItem
   onUpdateItem: InspectorPanelProps['onUpdateItem']
+  onArrange: InspectorPanelProps['onArrange']
 }) {
   const update = (patch: ItemPatch) => onUpdateItem(item.id, patch)
 
   return (
     <div>
+      {item.kind !== 'audio' ? (
+        <Section title="Arrange">
+          <div
+            className="grid grid-cols-4 gap-2"
+            role="group"
+            aria-label="Layer order"
+          >
+            {ARRANGE_ACTIONS.map((entry) => (
+              <IconButton
+                key={entry.action}
+                label={entry.label}
+                shortcut={entry.shortcut}
+                variant="outline"
+                className="h-9 w-full"
+                onClick={() => onArrange(entry.action)}
+                icon={<Icon icon={entry.icon} className="size-4" />}
+              />
+            ))}
+          </div>
+        </Section>
+      ) : null}
       {item.kind === 'video' ? (
         <Section title="Transform">
           <NumberField

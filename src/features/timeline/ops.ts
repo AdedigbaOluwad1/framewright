@@ -359,3 +359,90 @@ export function itemsAt(doc: TimelineDocument, time: Seconds): TimelineItem[] {
     (item) => time >= item.start - 1e-9 && time < itemEnd(item) - 1e-9,
   )
 }
+
+export type ArrangeAction = 'front' | 'forward' | 'backward' | 'back'
+
+type VisualItem = Extract<TimelineItem, { kind: 'video' | 'text' }>
+
+export function isVisual(item: TimelineItem): item is VisualItem {
+  return item.kind === 'video' || item.kind === 'text'
+}
+
+export function itemZ(item: TimelineItem): number {
+  if (!isVisual(item)) return 0
+  return item.z ?? (item.kind === 'text' ? 1 : 0)
+}
+
+export function sortForCompositing<T extends TimelineItem>(
+  doc: TimelineDocument,
+  items: readonly T[],
+): T[] {
+  const order = new Map(doc.tracks.map((track, index) => [track.id, index]))
+  return [...items].sort((a, b) => {
+    const byZ = itemZ(a) - itemZ(b)
+    if (byZ !== 0) return byZ
+    return (order.get(b.trackId) ?? 0) - (order.get(a.trackId) ?? 0)
+  })
+}
+
+function overlaps(a: TimelineItem, b: TimelineItem): boolean {
+  return a.start < itemEnd(b) - 1e-9 && b.start < itemEnd(a) - 1e-9
+}
+
+export function arrangeItems(
+  draft: Draft<TimelineDocument>,
+  itemIds: readonly string[],
+  action: ArrangeAction,
+) {
+  const visual = draft.items.filter(isVisual)
+  const selected = visual.filter((item) => itemIds.includes(item.id))
+  if (selected.length === 0) return
+  const zOf = (item: VisualItem) => item.z ?? (item.kind === 'text' ? 1 : 0)
+
+  if (action === 'front') {
+    let top = Math.max(...visual.map(zOf))
+    for (const item of [...selected].sort((a, b) => zOf(a) - zOf(b))) {
+      top += 1
+      item.z = top
+    }
+    return
+  }
+  if (action === 'back') {
+    let bottom = Math.min(...visual.map(zOf))
+    for (const item of [...selected].sort((a, b) => zOf(b) - zOf(a))) {
+      bottom -= 1
+      item.z = bottom
+    }
+    return
+  }
+
+  const ordered =
+    action === 'forward'
+      ? [...selected].sort((a, b) => zOf(b) - zOf(a))
+      : [...selected].sort((a, b) => zOf(a) - zOf(b))
+  for (const item of ordered) {
+    const others = visual.filter(
+      (other) =>
+        other.id !== item.id &&
+        !itemIds.includes(other.id) &&
+        overlaps(item, other),
+    )
+    const neighbour =
+      action === 'forward'
+        ? others
+            .filter((other) => zOf(other) >= zOf(item))
+            .sort((a, b) => zOf(a) - zOf(b))[0]
+        : others
+            .filter((other) => zOf(other) <= zOf(item))
+            .sort((a, b) => zOf(b) - zOf(a))[0]
+    if (!neighbour) continue
+    const mine = zOf(item)
+    const theirs = zOf(neighbour)
+    if (mine === theirs) {
+      item.z = action === 'forward' ? theirs + 1 : theirs - 1
+    } else {
+      item.z = theirs
+      neighbour.z = mine
+    }
+  }
+}

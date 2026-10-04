@@ -12,6 +12,10 @@ export type ActionId =
   | 'split'
   | 'delete'
   | 'rippleDelete'
+  | 'bringToFront'
+  | 'bringForward'
+  | 'sendBackward'
+  | 'sendToBack'
   | 'undo'
   | 'redo'
   | 'commandPalette'
@@ -139,6 +143,34 @@ export const SHORTCUTS: Record<ActionId, ShortcutDefinition> = {
     group: 'Edit',
     chords: [{ keys: ['Delete', 'Backspace'], shift: true }],
     display: 'Shift+Delete',
+  },
+  bringToFront: {
+    id: 'bringToFront',
+    label: 'Bring to front',
+    group: 'Edit',
+    chords: [{ keys: [']', '}'], mod: true, shift: true }],
+    display: 'Mod+Shift+]',
+  },
+  bringForward: {
+    id: 'bringForward',
+    label: 'Bring forward',
+    group: 'Edit',
+    chords: [{ keys: [']'], mod: true }],
+    display: 'Mod+]',
+  },
+  sendBackward: {
+    id: 'sendBackward',
+    label: 'Send backward',
+    group: 'Edit',
+    chords: [{ keys: ['['], mod: true }],
+    display: 'Mod+[',
+  },
+  sendToBack: {
+    id: 'sendToBack',
+    label: 'Send to back',
+    group: 'Edit',
+    chords: [{ keys: ['[', '{'], mod: true, shift: true }],
+    display: 'Mod+Shift+[',
   },
   undo: {
     id: 'undo',
