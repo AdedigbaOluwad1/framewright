@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import { formatDuration } from '@/shared/lib/timecode'
 import type { TextPreset } from '@/features/editor/store'
 import type { MediaAsset } from '@/features/timeline/types'
+import { ImportButton } from './ImportButton'
 import { ImportDropzone } from './ImportDropzone'
 import { MediaCard } from './MediaCard'
 
@@ -80,9 +81,13 @@ function ProjectPanelView({
             <EmptyState
               icon="hugeicons:folder-open"
               title="No media yet"
-              description="Import clips to start building your vertical video."
+              description="Import clips or images to start building your vertical video."
             >
-              <ImportDropzone onImportFiles={onImportFiles} />
+              <ImportButton
+                label="Upload media"
+                accept="video/*,image/*"
+                onImportFiles={onImportFiles}
+              />
             </EmptyState>
           ) : (
             <ScrollArea className="h-full">
@@ -135,9 +140,13 @@ function ProjectPanelView({
             <EmptyState
               icon="hugeicons:music-note-01"
               title="No audio yet"
-              description="Import music or a voice-over to layer under your video."
+              description="Add music or a voice-over to layer under your video."
             >
-              <ImportDropzone onImportFiles={onImportFiles} />
+              <ImportButton
+                label="Upload audio"
+                accept="audio/*"
+                onImportFiles={onImportFiles}
+              />
             </EmptyState>
           ) : (
             <ScrollArea className="h-full">
